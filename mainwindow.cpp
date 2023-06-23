@@ -13,6 +13,20 @@
 
 #include <QTableWidgetItem>
 
+#define TYRE_MIN_TEMP 40
+#define TYRE_OPT_TEMP 90
+#define TYRE_MAX_TEMP 160
+#define BRAKE_MIN_TEMP 100
+#define BRAKE_OPT_TEMP 500
+#define BRAKE_MAX_TEMP 1100
+#define ENGINE_MIN_TEMP 90
+#define ENGINE_OPT_TEMP 120
+#define ENGINE_MAX_TEMP 130
+
+Colour COLD_BLUE = Colour(4, 212, 212);
+Colour HEALTHY_GREEN = Colour(27, 171, 5);
+Colour BROKEN_RED = Colour(171, 5, 5);
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -264,7 +278,7 @@ void MainWindow::onPositionalDataMapUpdate(PositionalDataMap positionalDataMap) 
         // Add driver name label at each data point
         QCPItemText *label = new QCPItemText(ui->pltTrackMap);
         label->setText(QString::fromStdString(pd.driverLabel));
-        label->setColor(QColor(QString::fromStdString(pd.driverColour)));
+        label->setColor(QColor(QString::fromStdString(pd.driverColour.getHexCode())));
         label->setBrush(QBrush(QColor("grey")));
         label->setPositionAlignment(Qt::AlignTop | Qt::AlignHCenter);
         label->position->setCoords(pd.z, pd.x);
@@ -434,27 +448,18 @@ QString formatPercentage(uint8_t percent) {
 }
 
 std::string damageColour(uint8_t percent) {
-    // Convert percentage to a value between 0 and 1
-    double value = static_cast<double>(percent) / 100.0;
+    // Calculate the color interpolation based on the value
+    double t = static_cast<double>(percent) / 100.0;
+    uint8_t r = static_cast<uint8_t>(HEALTHY_GREEN.r + t * (BROKEN_RED.r - HEALTHY_GREEN.r));
+    uint8_t g = static_cast<uint8_t>(HEALTHY_GREEN.g + t * (BROKEN_RED.g - HEALTHY_GREEN.g));
+    uint8_t b = static_cast<uint8_t>(HEALTHY_GREEN.b + t * (BROKEN_RED.b - HEALTHY_GREEN.b));
 
-    // Calculate the RGB values for the color gradient
-    int r = static_cast<int>(value * 255);
-    int g = static_cast<int>((1 - value) * 255);
-    int b = 0;
-
-    // Adjust the color to make it slightly darker
-    float darkness_factor = 0.5;
-    r = static_cast<int>(r * darkness_factor);
-    g = static_cast<int>(g * darkness_factor);
-    b = static_cast<int>(b * darkness_factor);
-
-    // Convert the RGB values to a hex string
-    std::ostringstream oss;
-    oss << "#" << std::hex << std::setw(2) << std::setfill('0') << r
-        << std::hex << std::setw(2) << std::setfill('0') << g
-        << std::hex << std::setw(2) << std::setfill('0') << b;
-
-    return oss.str();
+    // Convert RGB values to hex string
+    std::stringstream hexStream;
+    hexStream << "#" << std::hex << std::setfill('0') << std::setw(2) << static_cast<int>(r);
+    hexStream << std::hex << std::setfill('0') << std::setw(2) << static_cast<int>(g);
+    hexStream << std::hex << std::setfill('0') << std::setw(2) << static_cast<int>(b);
+    return hexStream.str();
 }
 
 void MainWindow::onDamageUpdate(DamageData damage) {
@@ -503,7 +508,7 @@ void MainWindow::onDamageUpdate(DamageData damage) {
 
     ui->lblGearboxDamagePercent->setText("Gearbox: " + formatPercentage(damage.gearboxDamagePercent));
     ui->wgtGearbox->setStyleSheet(QString::fromStdString("background-color:" + damageColour(damage.gearboxDamagePercent)));
-    ui->lblEngineDamagePercent->setText(formatPercentage(damage.engineDamagePercent));
+    ui->lblEngineDamagePercent->setText("Engine: " + formatPercentage(damage.engineDamagePercent));
     ui->wgtEngine->setStyleSheet(QString::fromStdString("background-color:" + damageColour(damage.engineDamagePercent)));
 
     ui->lblICEWearPercent->setText("ICE: " + formatPercentage(damage.iceWearPercent));
@@ -529,29 +534,66 @@ QString formatTemperature(uint16_t temperature) {
     return QString::number(temperature) + QString("°C");
 }
 
+std::string temperatureColour(double temperature, double minTemp, double optimalTemp, double maxTemp) {
+    // Interpolate the RGB values based on the temperature percentage
+    int r, g, b;
+    if (temperature < optimalTemp) {
+        // Interpolate between blue and green
+        double greenPercentage = (temperature - minTemp) / (optimalTemp - minTemp);
+        r = COLD_BLUE.r + std::round(greenPercentage * (HEALTHY_GREEN.r - COLD_BLUE.r));
+        g = COLD_BLUE.g + std::round(greenPercentage * (HEALTHY_GREEN.g - COLD_BLUE.g));
+        b = COLD_BLUE.b + std::round(greenPercentage * (HEALTHY_GREEN.b - COLD_BLUE.b));
+    } else {
+        // Interpolate between green and red
+        double redPercentage = (temperature - optimalTemp) / (maxTemp - optimalTemp);
+        r = HEALTHY_GREEN.r + std::round(redPercentage * (BROKEN_RED.r - HEALTHY_GREEN.r));
+        g = HEALTHY_GREEN.g + std::round(redPercentage * (BROKEN_RED.g - HEALTHY_GREEN.g));
+        b = HEALTHY_GREEN.b + std::round(redPercentage * (BROKEN_RED.b - HEALTHY_GREEN.b));
+    }
+
+    // Convert the RGB values to a hex code
+    std::stringstream hexCodeStream;
+    hexCodeStream << std::setfill('0') << std::setw(2) << std::hex << r;
+    hexCodeStream << std::setfill('0') << std::setw(2) << std::hex << g;
+    hexCodeStream << std::setfill('0') << std::setw(2) << std::hex << b;
+    std::string hexCode = hexCodeStream.str();
+
+    return "#" + hexCode;
+}
+
 void MainWindow::onTemperaturePressureUpdate(TemperaturePressureData tempsPressure) {
     // TODO TEMPERATURE COLOURS (BRAKES, ENGINE, TYRE SURFACE, TYRE INNER)
     ui->lblRearLeftSurfaceTemperature->setText(formatTemperature(tempsPressure.rearLeftSurfaceTemperature));
+    ui->wgtRearLeftSurfaceTemperature->setStyleSheet(QString::fromStdString("background-color:" + temperatureColour(tempsPressure.rearLeftSurfaceTemperature, TYRE_MIN_TEMP, TYRE_OPT_TEMP, TYRE_MAX_TEMP)));
     ui->lblRearRightSurfaceTemperature->setText(formatTemperature(tempsPressure.rearRightSurfaceTemperature));
+    ui->wgtRearRightSurfaceTemperature->setStyleSheet(QString::fromStdString("background-color:" + temperatureColour(tempsPressure.rearRightSurfaceTemperature, TYRE_MIN_TEMP, TYRE_OPT_TEMP, TYRE_MAX_TEMP)));
     ui->lblFrontLeftSurfaceTemperature->setText(formatTemperature(tempsPressure.frontLeftSurfaceTemperature));
+    ui->wgtFrontLeftSurfaceTemperature->setStyleSheet(QString::fromStdString("background-color:" + temperatureColour(tempsPressure.frontLeftSurfaceTemperature, TYRE_MIN_TEMP, TYRE_OPT_TEMP, TYRE_MAX_TEMP)));
     ui->lblFrontRightSurfaceTemperature->setText(formatTemperature(tempsPressure.frontRightSurfaceTemperature));
+    ui->wgtFrontRightSurfaceTemperature->setStyleSheet(QString::fromStdString("background-color:" + temperatureColour(tempsPressure.frontRightSurfaceTemperature, TYRE_MIN_TEMP, TYRE_OPT_TEMP, TYRE_MAX_TEMP)));
 
     ui->lblRearLeftInnerTemperature->setText(formatTemperature(tempsPressure.rearLeftInnerTemperature));
+    ui->wgtRearLeftInnerTemperature->setStyleSheet(QString::fromStdString("background-color:" + temperatureColour(tempsPressure.rearLeftInnerTemperature, TYRE_MIN_TEMP, TYRE_OPT_TEMP, TYRE_MAX_TEMP)));
     ui->lblRearRightInnerTemperature->setText(formatTemperature(tempsPressure.rearRightInnerTemperature));
+    ui->wgtRearRightInnerTemperature->setStyleSheet(QString::fromStdString("background-color:" + temperatureColour(tempsPressure.rearRightInnerTemperature, TYRE_MIN_TEMP, TYRE_OPT_TEMP, TYRE_MAX_TEMP)));
     ui->lblFrontLeftInnerTemperature->setText(formatTemperature(tempsPressure.frontLeftInnerTemperature));
+    ui->wgtFrontLeftInnerTemperature->setStyleSheet(QString::fromStdString("background-color:" + temperatureColour(tempsPressure.frontLeftInnerTemperature, TYRE_MIN_TEMP, TYRE_OPT_TEMP, TYRE_MAX_TEMP)));
     ui->lblFrontRightInnerTemperature->setText(formatTemperature(tempsPressure.frontRightInnerTemperature));
+    ui->wgtFrontRightInnerTemperature->setStyleSheet(QString::fromStdString("background-color:" + temperatureColour(tempsPressure.frontRightInnerTemperature, TYRE_MIN_TEMP, TYRE_OPT_TEMP, TYRE_MAX_TEMP)));
 
     ui->lblRearLeftBrakeTemperature->setText(formatTemperature(tempsPressure.rearLeftBrakeTemperature));
+    ui->wgtRearLeftBrakeTemperature->setStyleSheet(QString::fromStdString("background-color:" + temperatureColour(tempsPressure.rearLeftBrakeTemperature, BRAKE_MIN_TEMP, BRAKE_OPT_TEMP, BRAKE_MAX_TEMP)));
     ui->lblRearRightBrakeTemperature->setText(formatTemperature(tempsPressure.rearRightBrakeTemperature));
+    ui->wgtRearRightBrakeTemperature->setStyleSheet(QString::fromStdString("background-color:" + temperatureColour(tempsPressure.rearRightBrakeTemperature, BRAKE_MIN_TEMP, BRAKE_OPT_TEMP, BRAKE_MAX_TEMP)));
     ui->lblFrontLeftBrakeTemperature->setText(formatTemperature(tempsPressure.frontLeftBrakeTemperature));
+    ui->wgtFrontLeftBrakeTemperature->setStyleSheet(QString::fromStdString("background-color:" + temperatureColour(tempsPressure.frontLeftBrakeTemperature, BRAKE_MIN_TEMP, BRAKE_OPT_TEMP, BRAKE_MAX_TEMP)));
     ui->lblFrontRightBrakeTemperature->setText(formatTemperature(tempsPressure.frontRightBrakeTemperature));
+    ui->wgtFrontRightBrakeTemperature->setStyleSheet(QString::fromStdString("background-color:" + temperatureColour(tempsPressure.frontRightBrakeTemperature, BRAKE_MIN_TEMP, BRAKE_OPT_TEMP, BRAKE_MAX_TEMP)));
 
     ui->lblEngineTemperature->setText(formatTemperature(tempsPressure.engineTemperature));
-
+    ui->wgtEngineTemperature->setStyleSheet(QString::fromStdString("background-color:" + temperatureColour(tempsPressure.engineTemperature, ENGINE_MIN_TEMP, ENGINE_OPT_TEMP, ENGINE_MAX_TEMP)));
 
     // TODO: PRESSURES (add to UI)
-    // TODO: TEMPERATURES CHANGE THE BACKGROUND COLOUR (AND PRESSURES?)
-
 }
 
 void MainWindow::onWheelTelemetryUpdate(WheelTelemetryData wheelTelemetry) {
@@ -703,7 +745,7 @@ void MainWindow::onLapHistoryTableUpdate(LapHistoryTable lapHistoryTable) {
         tyre->setFlags(tyre->flags() &  ~Qt::ItemIsEditable);
         tyre->setTextAlignment(Qt::AlignCenter);
         tyre->setFont(font);
-        tyre->setForeground(QBrush(QColor(QString::fromStdString(row.tyreColour))));
+        tyre->setForeground(QBrush(QColor(QString::fromStdString(row.tyreColour.getHexCode()))));
         ui->tblLapHistory->setItem(r, 5, tyre);
 
 
@@ -734,7 +776,7 @@ void MainWindow::onStintEnded(StintType stintType) {
 
 
 void MainWindow::on_ddSelectDriver_currentIndexChanged(int index) {
-    updater->driverSelected = index;
+    if (index >= 0) updater->driverSelected = index;
 }
 
 void MainWindow::on_btnStartStopUDP_clicked()
@@ -924,7 +966,7 @@ void MainWindow::updateLoadedRaceWeekendData() {
     ui->lblSetupBallast->setText(QString::number(s.ballast()) + " kg");
     ui->lblSetupFuelLoad->setText(QString::number(s.fuel_load()) + " kg");
     ui->lblSetupTyre->setText(QString::fromStdString(getActualTyreName(getActualTyreCompound(s.actual_tyre_compound()))));
-    ui->lblSetupTyre->setStyleSheet(QString::fromStdString("color:" + getVisualTyreColour(getVisualTyreCompound(s.visual_tyre_compound()))));
+    ui->lblSetupTyre->setStyleSheet(QString::fromStdString("color:" + getVisualTyreColour(getVisualTyreCompound(s.visual_tyre_compound())).getHexCode()));
 
     // Fill the
     QVector<double> fuelUsagePlotValues;

@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "enums.hpp"
+#include "colour.h"
 
 struct Participant {
     DriverID driverId;
@@ -160,7 +161,7 @@ struct LapHistoryRow {
     bool sector3Valid;
     bool lapValid;
     std::string tyre;
-    std::string tyreColour;
+    Colour tyreColour;
 };
 
 struct LapHistoryTable {
@@ -173,7 +174,7 @@ struct LapHistoryTable {
 
 struct PositionalData {
     std::string driverLabel;
-    std::string driverColour;
+    Colour driverColour;
     float x;
     float y;
     float z;

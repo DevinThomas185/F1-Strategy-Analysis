@@ -24,6 +24,14 @@ void UDPUpdater::run()
     while (enable_listening) {
         const PacketData packet = udp_listener.getPacket();
         PacketType packetType = getPacketType(packet);
+
+        if (packetType == PacketType::PARTICIPANTS) {
+            handleParticipantsPacket(packet);
+            raceRecorder.handleParticipantsPacket(packet);
+        }
+
+        if (!participantsReceived) continue;
+
         switch (packetType)
         {
         case PacketType::MOTION:
@@ -43,8 +51,7 @@ void UDPUpdater::run()
             raceRecorder.handleEventPacket(packet);
             break;
         case PacketType::PARTICIPANTS:
-            handleParticipantsPacket(packet);
-            raceRecorder.handleParticipantsPacket(packet);
+            // Handled above
             break;
         case PacketType::CAR_SETUPS:
             handleCarSetupPacket(packet);
@@ -321,9 +328,10 @@ void UDPUpdater::handleParticipantsPacket(const PacketData& packet) {
             ps.participants.push_back(p);
         }
 
+        participantsReceived = true;
+
         emit ParticipantsUpdate(ps);
     }
-
 }
 
 void UDPUpdater::handleCarSetupPacket(const PacketData& packet){}
@@ -492,7 +500,7 @@ void UDPUpdater::handleSessionHistoryPacket(const PacketData& packet){
             .sector3Valid = static_cast<bool>(lap.lapValidBitFlags & 0x08),
             .lapValid = static_cast<bool>(lap.lapValidBitFlags & 0x01),
             .tyre = "", // TEMPORARY
-            .tyreColour = "", // TEMPORARY
+            .tyreColour = Colour(0, 0, 0), // TEMPORARY
         };
         ld.table.push_back(ldr);
     }

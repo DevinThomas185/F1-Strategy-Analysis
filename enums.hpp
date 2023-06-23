@@ -3,6 +3,7 @@
 
 #include <string>
 #include "packets.hpp"
+#include "colour.h"
 
 enum TyreOrder {
     REAR_LEFT = 0,
@@ -119,7 +120,7 @@ enum TeamID {
 
 TeamID getTeamID(const uint8_t teamID);
 
-std::string getTeamColour(TeamID teamID);
+Colour getTeamColour(TeamID teamID);
 
 enum DriverID {
     //// F1 Teams
@@ -775,7 +776,7 @@ enum VisualTyreCompound
 
 VisualTyreCompound getVisualTyreCompound(const uint8_t visualTyreCompound);
 
-std::string getVisualTyreColour(VisualTyreCompound tyreCompound);
+Colour getVisualTyreColour(VisualTyreCompound tyreCompound);
 
 enum ERSDeployMode {
     NO_ERS = 0,

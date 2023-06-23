@@ -33,6 +33,7 @@ public:
     void handleCarDamagePacket(const PacketData& packet);
     void handleSessionHistoryPacket(const PacketData& packet);
 
+    bool participantsReceived = false;
     uint8_t driverSelected = 0;
     RaceRecorder raceRecorder;
 

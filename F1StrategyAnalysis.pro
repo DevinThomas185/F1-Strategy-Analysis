@@ -37,6 +37,7 @@ SOURCES += \
 
 HEADERS += \
     analysis.hpp \
+    colour.h \
     compiled_protos/Lap.pb.h \
     compiled_protos/Practice.pb.h \
     compiled_protos/Qualifying.pb.h \

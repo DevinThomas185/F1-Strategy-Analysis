@@ -39,30 +39,30 @@ TeamID getTeamID(const uint8_t teamID) {
     return static_cast<TeamID>(teamID);
 };
 
-std::string getTeamColour(TeamID teamID) {
+Colour getTeamColour(TeamID teamID) {
     switch (teamID) {
     case MERCEDES:
-        return "#00D2BE";
+        return Colour(0, 210, 190);
     case FERRARI:
-        return "#DC0000";
+        return Colour(220, 0, 0);
     case RED_BULL_RACING:
-        return "#0600EF";
+        return Colour(6, 0, 239);
     case WILLIAMS:
-        return "#005AFF";
+        return Colour(0, 90, 255);
     case ASTON_MARTIN:
-        return "#006F62";
+        return Colour(0, 111, 98);
     case ALPINE:
-        return "#0090FF";
+        return Colour(0, 144, 255);
     case ALPHATAURI:
-        return "#2B4562";
+        return Colour(43, 69, 98);
     case HAAS:
-        return "#FFFFFF";
+        return Colour(255, 255, 255);
     case MCLAREN:
-        return "#FF8700";
+        return Colour(255, 135, 0);
     case ALFA_ROMEO:
-        return "#900000";
+        return Colour(144, 0, 0);
     default:
-        return "#000000";
+        return Colour(0, 0, 0);
     }
 }
 
@@ -304,24 +304,24 @@ VisualTyreCompound getVisualTyreCompound(const uint8_t visualTyreCompound) {
     return static_cast<VisualTyreCompound>(visualTyreCompound);
 };
 
-std::string getVisualTyreColour(VisualTyreCompound tyreCompound) {
+Colour getVisualTyreColour(VisualTyreCompound tyreCompound) {
     switch (tyreCompound) {
     case SOFT_VISUAL:
     case SOFT_F2_VISUAL:
-        return "#de0202"; // RED
+        return Colour(222, 2, 2); // RED
     case MEDIUM_VISUAL:
     case MEDIUM_F2_VISUAL:
-        return "#f2de02"; // YELLOW
+        return Colour(242, 222, 2); // YELLOW
     case HARD_VISUAL:
     case HARD_F2_VISUAL:
-        return "#ffffff"; // WHITE
+        return Colour(255, 255, 255); // WHITE
     case INTER_VISUAL:
-        return "#00b512"; // GREEN
+        return Colour(0, 181, 18); // GREEN
     case WET_VISUAL:
     case WET_F2_VISUAL:
-        return "#25a2e6"; // BLUE
+        return Colour(37, 162, 230); // BLUE
     default:
-        return "#000000"; // BLACK
+        return Colour(0, 0, 0); // BLACK
     }
 }
 
