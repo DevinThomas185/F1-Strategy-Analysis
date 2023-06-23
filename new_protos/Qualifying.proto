@@ -1,0 +1,9 @@
+syntax = "proto3";
+
+import "QualifyingSession.proto";
+
+message Qualifying {
+    QualifyingSession session_1 = 1;
+    QualifyingSession session_2 = 2;
+    QualifyingSession session_3 = 3;
+}

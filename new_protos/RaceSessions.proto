@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+import "Practice.proto";
+import "Qualifying.proto";
+import "Race.proto";
+
+message RaceSessions {
+    Practice fp1 = 1;
+    Practice fp2 = 2;
+    Practice fp3 = 3;
+    Qualifying qualifying = 4;
+    Race race = 5;
+}

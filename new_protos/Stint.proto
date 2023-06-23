@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+import "Lap.proto";
+import "Setup.proto";
+
+message Stint {
+    repeated Lap lap = 1;
+
+    Setup setup = 2;
+}

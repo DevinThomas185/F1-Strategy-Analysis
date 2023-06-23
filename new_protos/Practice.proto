@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+import "Stint.proto";
+
+message Practice {
+    // Add more practice tags here
+    repeated Stint out_laps = 1; // Tyre and brake warming
+    repeated Stint installation_laps = 2; // Systems testing 
+    repeated Stint aero_mapping = 3; // Aero performance
+    repeated Stint performance_runs = 4; // Tyre compounds and fuel loads
+    repeated Stint long_runs = 5; // Tyre degradation, fuel consumption and race pace
+    repeated Stint race_simulation = 6; // Longer runs, race strategies, pit stops and tyre management
+    repeated Stint qualifying_simulation = 7; // Qualifying pace
+    repeated Stint practice_starts = 8; // Traction on starts
+}

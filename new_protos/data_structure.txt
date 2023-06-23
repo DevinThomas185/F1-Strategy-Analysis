@@ -1,0 +1,20 @@
+RaceWeekend
+    - RaceSessions
+        - Practice x3
+            - Stint
+                - Lap
+                    - Telemetry
+                - Setup
+        - Qualifying x1
+            - QualifyingSession x3
+                - Lap
+        - Race x1
+            - Stint
+    - SprintRaceSessions
+        - Practice x2
+        - Qualifying x1
+        - Race x2
+    - SprintRaceSessions2023
+        - Practice x1
+        - Qualifying x2
+        - Race x2

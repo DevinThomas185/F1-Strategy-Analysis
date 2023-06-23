@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+import "RaceSessions.proto";
+import "SprintRaceSessions.proto";
+import "SprintRaceSessions2023.proto";
+
+message RaceWeekend {
+    enum RaceType {
+        RACE_WEEKEND = 0;
+        SPRINT_WEEKEND = 1; // Old sprint format with FP2 instead of SQ
+        SPRINT_WEEKEND_2023 = 2; // Introduced for the new Sprint Qualifying format in 2023
+    }
+    
+    int32 track_id = 1; 
+    
+    RaceType race_type = 2;
+    oneof sessions {
+        RaceSessions race_sessions = 3;
+        SprintRaceSessions sprint_race_sessions = 4;
+        SprintRaceSessions2023 sprint_race_sessions_2023 = 5;
+    }
+}

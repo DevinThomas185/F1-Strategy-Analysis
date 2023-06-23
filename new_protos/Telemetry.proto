@@ -1,0 +1,107 @@
+syntax = "proto3";
+
+message Telemetry {
+    // Telemetry Data
+    uint32 speed = 1;
+    float throttle = 2;
+    float steer = 3;
+    float brake = 4;
+    uint32 clutch = 5;
+    int32 gear = 6;
+    uint32 engine_rpm = 7;
+    uint32 drs = 8;
+    uint32 rev_lights_percent = 9;
+    uint32 rev_lights_bit_value = 10;
+    
+    uint32 rear_left_brake_temperature = 11;
+    uint32 rear_right_brake_temperature = 12;
+    uint32 front_left_brake_temperature = 13;
+    uint32 front_right_brake_temperature = 14;
+
+    uint32 rear_left_tyre_surface_temperature = 15;
+    uint32 rear_right_tyre_surface_temperature = 16;
+    uint32 front_left_tyre_surface_temperature = 17;
+    uint32 front_right_tyre_surface_temperature = 18;
+
+    uint32 rear_left_tyre_inner_temperature = 19;
+    uint32 rear_right_tyre_inner_temperature = 20;
+    uint32 front_left_tyre_inner_temperature = 21;
+    uint32 front_right_tyre_inner_temperature = 22;
+
+    uint32 engine_temperature = 23;
+    
+    float rear_left_tyre_pressure = 24;
+    float rear_right_tyre_pressure = 25;
+    float front_left_tyre_pressure = 26;
+    float front_right_tyre_pressure = 27;
+
+    uint32 rear_left_surface_type = 28;
+    uint32 rear_right_surface_type = 29;
+    uint32 front_left_surface_type = 30;
+    uint32 front_right_surface_type = 31;
+
+
+    // Lap Data
+    float lap_distance = 32;
+
+
+    // Car Status Data
+    float fuel_in_tank = 33;
+    uint32 tyres_age_laps = 34;
+    float ers_store_energy = 35;
+    uint32 ers_deploy_mode = 36;
+    float ers_harvested_this_lap_mguk = 37;
+    float ers_harvested_this_lap_mguh = 38;
+    float ers_deployed_this_lap = 39;
+
+
+    // Damage Data
+    float rear_left_tyre_wear = 40;
+    float rear_right_tyre_wear = 41;
+    float front_left_tyre_wear = 42;
+    float front_right_tyre_wear = 43;
+
+    uint32 rear_left_tyre_damage = 44;
+    uint32 rear_right_tyre_damage = 45;
+    uint32 front_left_tyre_damage = 46;
+    uint32 front_right_tyre_damage = 47;
+
+    uint32 gear_box_damage = 48;
+    uint32 engine_damage = 49;
+
+    uint32 engine_ce_wear = 50;
+    uint32 engine_ice_wear = 51;
+    uint32 engine_tc_wear = 52;
+    uint32 engine_es_wear = 53;
+    uint32 engine_mguh_wear = 54;
+    uint32 engine_mguk_wear = 55;
+
+
+    // Motion Data
+    float rear_left_suspension_position = 56;
+    float rear_right_suspension_position = 57;
+    float front_left_suspension_position = 58;
+    float front_right_suspension_position = 59;
+
+    float rear_left_wheel_speed = 60;
+    float rear_right_wheel_speed = 61;
+    float front_left_wheel_speed = 62;
+    float front_right_wheel_speed = 63;
+
+    float rear_left_wheel_slip = 64;
+    float rear_right_wheel_slip = 65;
+    float front_left_wheel_slip = 66;
+    float front_right_wheel_slip = 67;
+
+    float world_position_x = 68;
+    float world_position_y = 69;
+    float world_position_z = 70;
+
+    float g_force_lateral = 71;
+    float g_force_longitudinal = 72;
+    float g_force_vertical = 73;
+
+    float yaw = 74;
+    float pitch = 75;
+    float roll = 76;
+}

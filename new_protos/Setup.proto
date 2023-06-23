@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+message Setup {
+    uint32 front_wing = 1;
+    uint32 rear_wing = 2;
+    uint32 differential_on_throttle = 3;
+    uint32 differential_off_throttle = 4;
+    float front_camber = 5;
+    float rear_camber = 6;
+    float front_toe = 7;
+    float rear_toe = 8;
+    uint32 front_suspension = 9;
+    uint32 rear_suspension = 10;
+    uint32 front_anti_roll_bar = 11;
+    uint32 rear_anti_roll_bar = 12;
+    uint32 front_suspension_height = 13;
+    uint32 rear_suspension_height = 14;
+    uint32 brake_pressure = 15;
+    uint32 brake_bias = 16;
+    float rear_left_tyre_pressure = 17;
+    float rear_right_tyre_pressure = 18;
+    float front_left_tyre_pressure = 19;
+    float front_right_tyre_pressure = 20;
+    uint32 ballast = 21;
+    float fuel_load = 22;
+    float fuel_capacity = 23;
+    uint32 actual_tyre_compound = 24;
+    uint32 visual_tyre_compound = 25;
+}

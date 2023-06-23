@@ -1,0 +1,7 @@
+syntax = "proto3";
+
+import "Lap.proto";
+
+message QualifyingSession {
+    repeated Lap lap = 1;
+}

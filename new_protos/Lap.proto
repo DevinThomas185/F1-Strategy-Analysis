@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+import "Telemetry.proto";
+
+message Lap {
+    uint32 lap_time = 1;
+    uint32 sector_1 = 2;
+    uint32 sector_2 = 3;
+    uint32 sector_3 = 4;
+    
+    bool valid_lap = 5;
+    bool valid_sector_1 = 6;
+    bool valid_sector_2 = 7;
+    bool valid_sector_3 = 8;
+
+    repeated Telemetry telemetry = 9;
+}
