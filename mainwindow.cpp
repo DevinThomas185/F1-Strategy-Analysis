@@ -97,31 +97,49 @@ void MainWindow::setupPlots() {
     ui->pltSpeed->addGraph();
     ui->pltSpeed->yAxis->setLabel("Speed (MPH)");
     ui->pltSpeed->yAxis->setRange(0, 250);
+    ui->pltRecordedSpeed->addGraph();
+    ui->pltRecordedSpeed->yAxis->setLabel("Speed (MPH)");
+    ui->pltRecordedSpeed->yAxis->setRange(0, 250);
 
     // Throttle Plot
     ui->pltThrottle->addGraph();
     ui->pltThrottle->yAxis->setLabel("Throttle (%)");
     ui->pltThrottle->yAxis->setRange(0, 100);
+    ui->pltRecordedThrottle->addGraph();
+    ui->pltRecordedThrottle->yAxis->setLabel("Throttle (%)");
+    ui->pltRecordedThrottle->yAxis->setRange(0, 100);
 
     // Brake Plot
     ui->pltBrake->addGraph();
     ui->pltBrake->yAxis->setLabel("Brake (%)");
     ui->pltBrake->yAxis->setRange(0, 100);
+    ui->pltRecordedBrake->addGraph();
+    ui->pltRecordedBrake->yAxis->setLabel("Brake (%)");
+    ui->pltRecordedBrake->yAxis->setRange(0, 100);
 
     // RPM Plot
     ui->pltRPM->addGraph();
     ui->pltRPM->yAxis->setLabel("RPM");
     ui->pltRPM->yAxis->setRange(3000, 14000);
+    ui->pltRecordedRPM->addGraph();
+    ui->pltRecordedRPM->yAxis->setLabel("RPM");
+    ui->pltRecordedRPM->yAxis->setRange(3000, 14000);
 
     // Gear Plot
     ui->pltGear->addGraph();
     ui->pltGear->yAxis->setLabel("Gear");
     ui->pltGear->yAxis->setRange(-1, 8);
+    ui->pltRecordedGear->addGraph();
+    ui->pltRecordedGear->yAxis->setLabel("Gear");
+    ui->pltRecordedGear->yAxis->setRange(-1, 8);
 
     // Steering Plot
     ui->pltSteering->addGraph();
     ui->pltSteering->yAxis->setLabel("Steering (%)");
     ui->pltSteering->yAxis->setRange(-100, 100);
+    ui->pltRecordedSteering->addGraph();
+    ui->pltRecordedSteering->yAxis->setLabel("Steering (%)");
+    ui->pltRecordedSteering->yAxis->setRange(-100, 100);
 
     // Track Map
     ui->pltTrackMap->addGraph();
@@ -1021,6 +1039,8 @@ void MainWindow::on_btnLoadRecording_clicked()
     // UI changes
     ui->tblRecordedLaps->clearContents();
 
+    // TODO: Change the drop downs here
+
     updateLoadedRaceWeekendData();
 }
 
@@ -1100,6 +1120,73 @@ void MainWindow::on_ddSelectLoadedStintNumber_currentIndexChanged(int index)
         return;
     }
     selectedLoadedStint = selectedLoadedStints[index];
+
+    // Set the number of laps for the telemetry tab
+    ui->ddSelectLoadedLapNumberTelemetryLap1->clear();
+    for (int i = 1; i <= selectedLoadedStint.lap_size(); i++) {
+        ui->ddSelectLoadedLapNumberTelemetryLap1->addItem(QString::number(i));
+    }
+
     updateLoadedRaceWeekendData();
+}
+
+void MainWindow::on_ddSelectLoadedLapNumberTelemetryLap1_currentIndexChanged(int index)
+{
+    if (index < 0) return; // index = -1 when clearing the combobox of lap numbers
+    selectedLoadedLap1 = selectedLoadedStint.lap()[index];
+    updateRecordedTelemetryGraphs();
+}
+
+void MainWindow::updateRecordedTelemetryGraphs() {
+    // Clear graphs
+    ui->pltRecordedSpeed->graph(0)->data()->clear();
+    ui->pltRecordedThrottle->graph(0)->data()->clear();
+    ui->pltRecordedBrake->graph(0)->data()->clear();
+    ui->pltRecordedRPM->graph(0)->data()->clear();
+    ui->pltRecordedGear->graph(0)->data()->clear();
+    ui->pltRecordedSteering->graph(0)->data()->clear();
+
+
+    QVector<double> speedRecordedValues;
+    QVector<double> throttleRecordedValues;
+    QVector<double> brakeRecordedValues;
+    QVector<double> rpmRecordedValues;
+    QVector<double> gearRecordedValues;
+    QVector<double> steeringRecordedValues;
+    QVector<double> distanceRecordedValues;
+
+    for (auto t : selectedLoadedLap1.telemetry()) {
+        speedRecordedValues.append(convertKPHtoMPH((uint16_t)t.speed()));
+        throttleRecordedValues.append(t.throttle() * 100);
+        brakeRecordedValues.append(t.brake() * 100);
+        rpmRecordedValues.append(t.engine_rpm());
+        gearRecordedValues.append(t.gear());
+        steeringRecordedValues.append(t.steer() * 100);
+        distanceRecordedValues.append(t.lap_distance());
+    }
+
+    ui->pltRecordedSpeed->graph(0)->setData(distanceRecordedValues, speedRecordedValues);
+    ui->pltRecordedSpeed->xAxis->setRange(0, loadedRaceWeekend.track_length());
+    ui->pltRecordedSpeed->replot();
+
+    ui->pltRecordedThrottle->graph(0)->setData(distanceRecordedValues, throttleRecordedValues);
+    ui->pltRecordedThrottle->xAxis->setRange(0, loadedRaceWeekend.track_length());
+    ui->pltRecordedThrottle->replot();
+
+    ui->pltRecordedBrake->graph(0)->setData(distanceRecordedValues, brakeRecordedValues);
+    ui->pltRecordedBrake->xAxis->setRange(0, loadedRaceWeekend.track_length());
+    ui->pltRecordedBrake->replot();
+
+    ui->pltRecordedRPM->graph(0)->setData(distanceRecordedValues, rpmRecordedValues);
+    ui->pltRecordedRPM->xAxis->setRange(0, loadedRaceWeekend.track_length());
+    ui->pltRecordedRPM->replot();
+
+    ui->pltRecordedGear->graph(0)->setData(distanceRecordedValues, gearRecordedValues);
+    ui->pltRecordedGear->xAxis->setRange(0, loadedRaceWeekend.track_length());
+    ui->pltRecordedGear->replot();
+
+    ui->pltRecordedSteering->graph(0)->setData(distanceRecordedValues, steeringRecordedValues);
+    ui->pltRecordedSteering->xAxis->setRange(0, loadedRaceWeekend.track_length());
+    ui->pltRecordedSteering->replot();
 }
 

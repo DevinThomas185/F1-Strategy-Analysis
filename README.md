@@ -1,16 +1,18 @@
 # F1 Strategy Analysis
 
-The EA Sports F1 games have the ability to broadcast telemetry data about your race to a computer. However, there is a lack of software that utilises this essential data. 
+The EA Sports F1 games have the ability to broadcast telemetry data about your race to a computer. However, there is a lack of software that utilises this essential data.
 
 This software was designed to consume and display data output by the F1 games. Live race data can be viewed by a race engineer to analyse the current race performance.
 
 Additionally, the race engineer can record practice session laps and allocate them to 'stint's such as race or qualifying simulations. By producing a protobuf file from the recording, we can achieve a much smaller file size than its JSON copy. Recorded laps can later be loaded back in to be analysed later.
 
 ### Supported F1 Versions
+
 - F1 22
 - F1 23 (with F1 22 Output)
 
 ## Features
+
 Positions table and weather forecast
 ![](/demo_images/Positions.png "Positions Table and Weather Forecast")
 
@@ -24,15 +26,21 @@ Lap history table
 ![](/demo_images/LapHistory.png "Lap History")
 
 Track map
-![](/demo_images/TrackMap.png "Positions Table and Weather Forecast")
+![](/demo_images/TrackMap.png "Track map")
 
+Lap recording
+![](/demo_images/LapRecording.png "Lap recording")
+
+Recorded telemetry
+![](/demo_images/RecordedTelemetry.png "Recorded Telemetry")
 
 ## Upcoming Features
+
 - Temperature colours in the damage window
 - IP and Port input in settings menu bar
 - Fix to tyre wear in damage window
 - Flags for each marshal zone displayed with safety car indicator
-- Track maps for 
+- Track maps for
   - Jeddah Corniche Circuit (Saudi Arabia)
   - Albert Park (Australia)
   - Baku City Circuit (Azerbaijan)

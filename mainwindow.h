@@ -56,6 +56,9 @@ private:
     google::protobuf::RepeatedPtrField<Stint> selectedLoadedStints;
     Stint selectedLoadedStint;
 
+    void updateRecordedTelemetryGraphs();
+    Lap selectedLoadedLap1;
+
 protected:
     void timerEvent(QTimerEvent *event);
 
@@ -98,5 +101,6 @@ private slots:
     void on_ddSelectLoadedSession_currentIndexChanged(int index);
     void on_ddSelectLoadedStintType_currentIndexChanged(int index);
     void on_ddSelectLoadedStintNumber_currentIndexChanged(int index);
+    void on_ddSelectLoadedLapNumberTelemetryLap1_currentIndexChanged(int index);
 };
 #endif // MAINWINDOW_H

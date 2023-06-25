@@ -124,7 +124,7 @@
      </sizepolicy>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>6</number>
     </property>
     <property name="usesScrollButtons">
      <bool>false</bool>
@@ -6199,6 +6199,73 @@
          </property>
          <property name="text">
           <string>0 %/lap</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="recordedTelemetryTab">
+     <attribute name="title">
+      <string>Recorded Telemetry</string>
+     </attribute>
+     <widget class="QWidget" name="verticalLayoutWidget_8">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>60</y>
+        <width>1461</width>
+        <height>631</height>
+       </rect>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout_12">
+       <item>
+        <widget class="QCustomPlot" name="pltRecordedSpeed" native="true">
+         <property name="autoFillBackground">
+          <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCustomPlot" name="pltRecordedThrottle" native="true"/>
+       </item>
+       <item>
+        <widget class="QCustomPlot" name="pltRecordedBrake" native="true"/>
+       </item>
+       <item>
+        <widget class="QCustomPlot" name="pltRecordedRPM" native="true"/>
+       </item>
+       <item>
+        <widget class="QCustomPlot" name="pltRecordedGear" native="true"/>
+       </item>
+       <item>
+        <widget class="QCustomPlot" name="pltRecordedSteering" native="true"/>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="horizontalLayoutWidget_25">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>10</y>
+        <width>621</width>
+        <height>41</height>
+       </rect>
+      </property>
+      <layout class="QHBoxLayout" name="horizontalLayout_26">
+       <item>
+        <widget class="QComboBox" name="ddSelectLoadedLapNumberTelemetryLap1">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>150</width>
+           <height>0</height>
+          </size>
          </property>
         </widget>
        </item>
