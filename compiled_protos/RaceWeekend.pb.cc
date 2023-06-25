@@ -23,6 +23,7 @@ namespace _pbi = _pb::internal;
 PROTOBUF_CONSTEXPR RaceWeekend::RaceWeekend(
     ::_pbi::ConstantInitialized): _impl_{
     /*decltype(_impl_.track_id_)*/0
+  , /*decltype(_impl_.track_length_)*/0u
   , /*decltype(_impl_.race_type_)*/0
   , /*decltype(_impl_.sessions_)*/{}
   , /*decltype(_impl_._cached_size_)*/{}
@@ -48,6 +49,7 @@ const uint32_t TableStruct_RaceWeekend_2eproto::offsets[] PROTOBUF_SECTION_VARIA
   ~0u,  // no _weak_field_map_
   ~0u,  // no _inlined_string_donated_
   PROTOBUF_FIELD_OFFSET(::RaceWeekend, _impl_.track_id_),
+  PROTOBUF_FIELD_OFFSET(::RaceWeekend, _impl_.track_length_),
   PROTOBUF_FIELD_OFFSET(::RaceWeekend, _impl_.race_type_),
   ::_pbi::kInvalidFieldOffsetTag,
   ::_pbi::kInvalidFieldOffsetTag,
@@ -65,15 +67,16 @@ static const ::_pb::Message* const file_default_instances[] = {
 const char descriptor_table_protodef_RaceWeekend_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
   "\n\021RaceWeekend.proto\032\022RaceSessions.proto\032"
   "\030SprintRaceSessions.proto\032\034SprintRaceSes"
-  "sions2023.proto\"\273\002\n\013RaceWeekend\022\020\n\010track"
-  "_id\030\001 \001(\005\022(\n\trace_type\030\002 \001(\0162\025.RaceWeeke"
-  "nd.RaceType\022&\n\rrace_sessions\030\003 \001(\0132\r.Rac"
-  "eSessionsH\000\0223\n\024sprint_race_sessions\030\004 \001("
-  "\0132\023.SprintRaceSessionsH\000\022<\n\031sprint_race_"
-  "sessions_2023\030\005 \001(\0132\027.SprintRaceSessions"
-  "2023H\000\"I\n\010RaceType\022\020\n\014RACE_WEEKEND\020\000\022\022\n\016"
-  "SPRINT_WEEKEND\020\001\022\027\n\023SPRINT_WEEKEND_2023\020"
-  "\002B\n\n\010sessionsb\006proto3"
+  "sions2023.proto\"\321\002\n\013RaceWeekend\022\020\n\010track"
+  "_id\030\001 \001(\005\022\024\n\014track_length\030\002 \001(\r\022(\n\trace_"
+  "type\030\003 \001(\0162\025.RaceWeekend.RaceType\022&\n\rrac"
+  "e_sessions\030\004 \001(\0132\r.RaceSessionsH\000\0223\n\024spr"
+  "int_race_sessions\030\005 \001(\0132\023.SprintRaceSess"
+  "ionsH\000\022<\n\031sprint_race_sessions_2023\030\006 \001("
+  "\0132\027.SprintRaceSessions2023H\000\"I\n\010RaceType"
+  "\022\020\n\014RACE_WEEKEND\020\000\022\022\n\016SPRINT_WEEKEND\020\001\022\027"
+  "\n\023SPRINT_WEEKEND_2023\020\002B\n\n\010sessionsb\006pro"
+  "to3"
   ;
 static const ::_pbi::DescriptorTable* const descriptor_table_RaceWeekend_2eproto_deps[3] = {
   &::descriptor_table_RaceSessions_2eproto,
@@ -82,7 +85,7 @@ static const ::_pbi::DescriptorTable* const descriptor_table_RaceWeekend_2eproto
 };
 static ::_pbi::once_flag descriptor_table_RaceWeekend_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_RaceWeekend_2eproto = {
-    false, false, 421, descriptor_table_protodef_RaceWeekend_2eproto,
+    false, false, 443, descriptor_table_protodef_RaceWeekend_2eproto,
     "RaceWeekend.proto",
     &descriptor_table_RaceWeekend_2eproto_once, descriptor_table_RaceWeekend_2eproto_deps, 3, 1,
     schemas, file_default_instances, TableStruct_RaceWeekend_2eproto::offsets,
@@ -223,6 +226,7 @@ RaceWeekend::RaceWeekend(const RaceWeekend& from)
   RaceWeekend* const _this = this; (void)_this;
   new (&_impl_) Impl_{
       decltype(_impl_.track_id_){}
+    , decltype(_impl_.track_length_){}
     , decltype(_impl_.race_type_){}
     , decltype(_impl_.sessions_){}
     , /*decltype(_impl_._cached_size_)*/{}
@@ -262,6 +266,7 @@ inline void RaceWeekend::SharedCtor(
   (void)is_message_owned;
   new (&_impl_) Impl_{
       decltype(_impl_.track_id_){0}
+    , decltype(_impl_.track_length_){0u}
     , decltype(_impl_.race_type_){0}
     , decltype(_impl_.sessions_){}
     , /*decltype(_impl_._cached_size_)*/{}
@@ -346,34 +351,42 @@ const char* RaceWeekend::_InternalParse(const char* ptr, ::_pbi::ParseContext* c
         } else
           goto handle_unusual;
         continue;
-      // .RaceWeekend.RaceType race_type = 2;
+      // uint32 track_length = 2;
       case 2:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 16)) {
+          _impl_.track_length_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // .RaceWeekend.RaceType race_type = 3;
+      case 3:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 24)) {
           uint64_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
           CHK_(ptr);
           _internal_set_race_type(static_cast<::RaceWeekend_RaceType>(val));
         } else
           goto handle_unusual;
         continue;
-      // .RaceSessions race_sessions = 3;
-      case 3:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 26)) {
+      // .RaceSessions race_sessions = 4;
+      case 4:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 34)) {
           ptr = ctx->ParseMessage(_internal_mutable_race_sessions(), ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
         continue;
-      // .SprintRaceSessions sprint_race_sessions = 4;
-      case 4:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 34)) {
+      // .SprintRaceSessions sprint_race_sessions = 5;
+      case 5:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 42)) {
           ptr = ctx->ParseMessage(_internal_mutable_sprint_race_sessions(), ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
         continue;
-      // .SprintRaceSessions2023 sprint_race_sessions_2023 = 5;
-      case 5:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 42)) {
+      // .SprintRaceSessions2023 sprint_race_sessions_2023 = 6;
+      case 6:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 50)) {
           ptr = ctx->ParseMessage(_internal_mutable_sprint_race_sessions_2023(), ptr);
           CHK_(ptr);
         } else
@@ -414,31 +427,37 @@ uint8_t* RaceWeekend::_InternalSerialize(
     target = ::_pbi::WireFormatLite::WriteInt32ToArray(1, this->_internal_track_id(), target);
   }
 
-  // .RaceWeekend.RaceType race_type = 2;
+  // uint32 track_length = 2;
+  if (this->_internal_track_length() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteUInt32ToArray(2, this->_internal_track_length(), target);
+  }
+
+  // .RaceWeekend.RaceType race_type = 3;
   if (this->_internal_race_type() != 0) {
     target = stream->EnsureSpace(target);
     target = ::_pbi::WireFormatLite::WriteEnumToArray(
-      2, this->_internal_race_type(), target);
+      3, this->_internal_race_type(), target);
   }
 
-  // .RaceSessions race_sessions = 3;
+  // .RaceSessions race_sessions = 4;
   if (_internal_has_race_sessions()) {
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
-      InternalWriteMessage(3, _Internal::race_sessions(this),
+      InternalWriteMessage(4, _Internal::race_sessions(this),
         _Internal::race_sessions(this).GetCachedSize(), target, stream);
   }
 
-  // .SprintRaceSessions sprint_race_sessions = 4;
+  // .SprintRaceSessions sprint_race_sessions = 5;
   if (_internal_has_sprint_race_sessions()) {
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
-      InternalWriteMessage(4, _Internal::sprint_race_sessions(this),
+      InternalWriteMessage(5, _Internal::sprint_race_sessions(this),
         _Internal::sprint_race_sessions(this).GetCachedSize(), target, stream);
   }
 
-  // .SprintRaceSessions2023 sprint_race_sessions_2023 = 5;
+  // .SprintRaceSessions2023 sprint_race_sessions_2023 = 6;
   if (_internal_has_sprint_race_sessions_2023()) {
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
-      InternalWriteMessage(5, _Internal::sprint_race_sessions_2023(this),
+      InternalWriteMessage(6, _Internal::sprint_race_sessions_2023(this),
         _Internal::sprint_race_sessions_2023(this).GetCachedSize(), target, stream);
   }
 
@@ -463,28 +482,33 @@ size_t RaceWeekend::ByteSizeLong() const {
     total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(this->_internal_track_id());
   }
 
-  // .RaceWeekend.RaceType race_type = 2;
+  // uint32 track_length = 2;
+  if (this->_internal_track_length() != 0) {
+    total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(this->_internal_track_length());
+  }
+
+  // .RaceWeekend.RaceType race_type = 3;
   if (this->_internal_race_type() != 0) {
     total_size += 1 +
       ::_pbi::WireFormatLite::EnumSize(this->_internal_race_type());
   }
 
   switch (sessions_case()) {
-    // .RaceSessions race_sessions = 3;
+    // .RaceSessions race_sessions = 4;
     case kRaceSessions: {
       total_size += 1 +
         ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
           *_impl_.sessions_.race_sessions_);
       break;
     }
-    // .SprintRaceSessions sprint_race_sessions = 4;
+    // .SprintRaceSessions sprint_race_sessions = 5;
     case kSprintRaceSessions: {
       total_size += 1 +
         ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
           *_impl_.sessions_.sprint_race_sessions_);
       break;
     }
-    // .SprintRaceSessions2023 sprint_race_sessions_2023 = 5;
+    // .SprintRaceSessions2023 sprint_race_sessions_2023 = 6;
     case kSprintRaceSessions2023: {
       total_size += 1 +
         ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
@@ -515,6 +539,9 @@ void RaceWeekend::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PR
 
   if (from._internal_track_id() != 0) {
     _this->_internal_set_track_id(from._internal_track_id());
+  }
+  if (from._internal_track_length() != 0) {
+    _this->_internal_set_track_length(from._internal_track_length());
   }
   if (from._internal_race_type() != 0) {
     _this->_internal_set_race_type(from._internal_race_type());

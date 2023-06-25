@@ -11,12 +11,13 @@ message RaceWeekend {
         SPRINT_WEEKEND_2023 = 2; // Introduced for the new Sprint Qualifying format in 2023
     }
     
-    int32 track_id = 1; 
+    int32 track_id = 1;
+    uint32 track_length = 2;
     
-    RaceType race_type = 2;
+    RaceType race_type = 3;
     oneof sessions {
-        RaceSessions race_sessions = 3;
-        SprintRaceSessions sprint_race_sessions = 4;
-        SprintRaceSessions2023 sprint_race_sessions_2023 = 5;
+        RaceSessions race_sessions = 4;
+        SprintRaceSessions sprint_race_sessions = 5;
+        SprintRaceSessions2023 sprint_race_sessions_2023 = 6;
     }
 }

@@ -127,9 +127,9 @@ class RaceWeekend final :
     return *internal_default_instance();
   }
   enum SessionsCase {
-    kRaceSessions = 3,
-    kSprintRaceSessions = 4,
-    kSprintRaceSessions2023 = 5,
+    kRaceSessions = 4,
+    kSprintRaceSessions = 5,
+    kSprintRaceSessions2023 = 6,
     SESSIONS_NOT_SET = 0,
   };
 
@@ -244,10 +244,11 @@ class RaceWeekend final :
 
   enum : int {
     kTrackIdFieldNumber = 1,
-    kRaceTypeFieldNumber = 2,
-    kRaceSessionsFieldNumber = 3,
-    kSprintRaceSessionsFieldNumber = 4,
-    kSprintRaceSessions2023FieldNumber = 5,
+    kTrackLengthFieldNumber = 2,
+    kRaceTypeFieldNumber = 3,
+    kRaceSessionsFieldNumber = 4,
+    kSprintRaceSessionsFieldNumber = 5,
+    kSprintRaceSessions2023FieldNumber = 6,
   };
   // int32 track_id = 1;
   void clear_track_id();
@@ -258,7 +259,16 @@ class RaceWeekend final :
   void _internal_set_track_id(int32_t value);
   public:
 
-  // .RaceWeekend.RaceType race_type = 2;
+  // uint32 track_length = 2;
+  void clear_track_length();
+  uint32_t track_length() const;
+  void set_track_length(uint32_t value);
+  private:
+  uint32_t _internal_track_length() const;
+  void _internal_set_track_length(uint32_t value);
+  public:
+
+  // .RaceWeekend.RaceType race_type = 3;
   void clear_race_type();
   ::RaceWeekend_RaceType race_type() const;
   void set_race_type(::RaceWeekend_RaceType value);
@@ -267,7 +277,7 @@ class RaceWeekend final :
   void _internal_set_race_type(::RaceWeekend_RaceType value);
   public:
 
-  // .RaceSessions race_sessions = 3;
+  // .RaceSessions race_sessions = 4;
   bool has_race_sessions() const;
   private:
   bool _internal_has_race_sessions() const;
@@ -285,7 +295,7 @@ class RaceWeekend final :
       ::RaceSessions* race_sessions);
   ::RaceSessions* unsafe_arena_release_race_sessions();
 
-  // .SprintRaceSessions sprint_race_sessions = 4;
+  // .SprintRaceSessions sprint_race_sessions = 5;
   bool has_sprint_race_sessions() const;
   private:
   bool _internal_has_sprint_race_sessions() const;
@@ -303,7 +313,7 @@ class RaceWeekend final :
       ::SprintRaceSessions* sprint_race_sessions);
   ::SprintRaceSessions* unsafe_arena_release_sprint_race_sessions();
 
-  // .SprintRaceSessions2023 sprint_race_sessions_2023 = 5;
+  // .SprintRaceSessions2023 sprint_race_sessions_2023 = 6;
   bool has_sprint_race_sessions_2023() const;
   private:
   bool _internal_has_sprint_race_sessions_2023() const;
@@ -338,6 +348,7 @@ class RaceWeekend final :
   typedef void DestructorSkippable_;
   struct Impl_ {
     int32_t track_id_;
+    uint32_t track_length_;
     int race_type_;
     union SessionsUnion {
       constexpr SessionsUnion() : _constinit_{} {}
@@ -384,7 +395,27 @@ inline void RaceWeekend::set_track_id(int32_t value) {
   // @@protoc_insertion_point(field_set:RaceWeekend.track_id)
 }
 
-// .RaceWeekend.RaceType race_type = 2;
+// uint32 track_length = 2;
+inline void RaceWeekend::clear_track_length() {
+  _impl_.track_length_ = 0u;
+}
+inline uint32_t RaceWeekend::_internal_track_length() const {
+  return _impl_.track_length_;
+}
+inline uint32_t RaceWeekend::track_length() const {
+  // @@protoc_insertion_point(field_get:RaceWeekend.track_length)
+  return _internal_track_length();
+}
+inline void RaceWeekend::_internal_set_track_length(uint32_t value) {
+  
+  _impl_.track_length_ = value;
+}
+inline void RaceWeekend::set_track_length(uint32_t value) {
+  _internal_set_track_length(value);
+  // @@protoc_insertion_point(field_set:RaceWeekend.track_length)
+}
+
+// .RaceWeekend.RaceType race_type = 3;
 inline void RaceWeekend::clear_race_type() {
   _impl_.race_type_ = 0;
 }
@@ -404,7 +435,7 @@ inline void RaceWeekend::set_race_type(::RaceWeekend_RaceType value) {
   // @@protoc_insertion_point(field_set:RaceWeekend.race_type)
 }
 
-// .RaceSessions race_sessions = 3;
+// .RaceSessions race_sessions = 4;
 inline bool RaceWeekend::_internal_has_race_sessions() const {
   return sessions_case() == kRaceSessions;
 }
@@ -470,7 +501,7 @@ inline ::RaceSessions* RaceWeekend::mutable_race_sessions() {
   return _msg;
 }
 
-// .SprintRaceSessions sprint_race_sessions = 4;
+// .SprintRaceSessions sprint_race_sessions = 5;
 inline bool RaceWeekend::_internal_has_sprint_race_sessions() const {
   return sessions_case() == kSprintRaceSessions;
 }
@@ -536,7 +567,7 @@ inline ::SprintRaceSessions* RaceWeekend::mutable_sprint_race_sessions() {
   return _msg;
 }
 
-// .SprintRaceSessions2023 sprint_race_sessions_2023 = 5;
+// .SprintRaceSessions2023 sprint_race_sessions_2023 = 6;
 inline bool RaceWeekend::_internal_has_sprint_race_sessions_2023() const {
   return sessions_case() == kSprintRaceSessions2023;
 }

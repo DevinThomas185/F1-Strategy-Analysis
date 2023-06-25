@@ -55,7 +55,7 @@ private:
     CarStatusData lastStatusData;
     PacketMotionData lastMotionPacket; // Needs to be packet to retain extra player car only data
 
-    uint8_t currentLapNum = 0;
+    uint8_t currentLapNum = 1;
     float currentDistance;
     DriverStatus driverStatus = DriverStatus::IN_GARAGE;
 

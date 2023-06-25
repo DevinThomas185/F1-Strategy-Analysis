@@ -873,6 +873,8 @@ RaceWeekend loadRaceFromFile(const QString& filePath) {
 }
 
 void plotRegressionLine(QCustomPlot* customPlot, const LinearRegressionResult& result) {
+    customPlot->graph(0)->data()->clear(); // Remove positions
+
     // Create a QVector for x values
     QVector<double> xValues;
     xValues << customPlot->xAxis->range().lower << customPlot->xAxis->range().upper;
@@ -908,6 +910,7 @@ void MainWindow::updateLoadedRaceWeekendData() {
     for (size_t i = 0; i < selectedLoadedStint.lap_size(); i++) {
         Lap lap = selectedLoadedStint.lap()[i];
 
+        // If there is no laptime recorded, do not make a row for this data
         if (lap.lap_time() == 0) continue;
 
         QTableWidgetItem *lapNumber = new QTableWidgetItem(QString::number(i+1));
@@ -968,7 +971,6 @@ void MainWindow::updateLoadedRaceWeekendData() {
     ui->lblSetupTyre->setText(QString::fromStdString(getActualTyreName(getActualTyreCompound(s.actual_tyre_compound()))));
     ui->lblSetupTyre->setStyleSheet(QString::fromStdString("color:" + getVisualTyreColour(getVisualTyreCompound(s.visual_tyre_compound())).getHexCode()));
 
-    // Fill the
     QVector<double> fuelUsagePlotValues;
     QVector<double> tyreDegradationPlotValues;
     QVector<double> lapDistancePlotValues;
@@ -994,16 +996,14 @@ void MainWindow::updateLoadedRaceWeekendData() {
     ui->pltFuelUsage->rescaleAxes();
     plotRegressionLine(ui->pltFuelUsage, fuelRegression);
 
-    // TODO: REPLACE WITH TRACK LENGTH (STORE IN raceWeekend.trackLength)
-    ui->lblFuelUsagePerLap->setText(QString::number(std::abs(fuelRegression.gradient) * 5842) + " kg/lap");
+    ui->lblFuelUsagePerLap->setText(QString::number(std::abs(fuelRegression.gradient) * loadedRaceWeekend.track_length()) + " kg/lap");
 
     ui->pltTyreDegradation->graph(0)->setData(lapDistancePlotValues, tyreDegradationPlotValues);
     ui->pltTyreDegradation->rescaleAxes();
     plotRegressionLine(ui->pltTyreDegradation, tyreRegression);
 
-    // TODO: SAME AS ABOVE
     // TODO: previous linear regression needs to be cleared each load
-    ui->lblTyreDegradationPerLap->setText(QString::number(std::abs(tyreRegression.gradient) * 5842) + " %/lap");
+    ui->lblTyreDegradationPerLap->setText(QString::number(std::abs(tyreRegression.gradient) * loadedRaceWeekend.track_length()) + " %/lap");
 }
 
 

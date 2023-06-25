@@ -88,6 +88,7 @@ void RaceRecorder::handleSessionPacket(const PacketData& packet) {
 
     trackId = getTrackID(sessionData.trackId);
     raceWeekend.set_track_id(sessionData.trackId);
+    raceWeekend.set_track_length(sessionData.trackLength);
 }
 
 void RaceRecorder::handleLapPacket(const PacketData& packet) {
@@ -131,7 +132,8 @@ void RaceRecorder::handleLapPacket(const PacketData& packet) {
     currentDistance = lapData.lapDistance;
     lastLapData = lapData;
 
-    addTelemetryDataToLap();
+    // We do not want to record out lap data or in garage data (game messes up the lap numbers)
+    if (driverStatus != DriverStatus::OUT_LAP && driverStatus != DriverStatus::IN_GARAGE) addTelemetryDataToLap();
 }
 
 void RaceRecorder::handleEventPacket(const PacketData& packet) {
