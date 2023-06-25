@@ -36,32 +36,35 @@ Recorded telemetry
 
 ## Upcoming Features
 
-- Temperature colours in the damage window
+- Flags and safety car status shown in events announcements
+- Marshal flags shown by section
 - IP and Port input in settings menu bar
 - Fix to tyre wear in damage window
 - Flags for each marshal zone displayed with safety car indicator
-- Track maps for
-  - Jeddah Corniche Circuit (Saudi Arabia)
-  - Albert Park (Australia)
-  - Baku City Circuit (Azerbaijan)
-  - Miami International Autodrome (Miami)
-  - Imola Circuit (Emilia Romagna)
-  - Circuit de Monaco (Monaco)
-  - Circuit de Barcelona-Catalunya (Spain)
-  - Grand Prix Circuit Gilles Villeneuve (Canada)
-  - Red Bull Ring (Austria)
-  - Silverstone Circuit (Britain)
-  - Hungaroring (Hungary)
-  - Circuit de Spa-Francorchamps (Belgium)
-  - Circuit Zandvoort (Netherlands)
-  - Monza Circuit (Italy)
-  - Marina Bay Street Circuit (Singapore)
-  - Lusail International Circuit (Qatar)
-  - Circuit of the Americas (USA)
-  - Autodromo Hermanos Rodriguez (Mexico)
-  - Interlagos Circuit (Brazil)
-  - Las Vegas Street Circuit (Las Vegas)
-  - Yas Marina Circuit (Abu Dhabi)
-  - Portimao (Portugal)
-  - Shanghai (China)
-  - Paul Ricard (France)
+
+### Track Maps
+
+- Jeddah Corniche Circuit (Saudi Arabia)
+- Albert Park (Australia)
+- Baku City Circuit (Azerbaijan)
+- Miami International Autodrome (Miami)
+- Imola Circuit (Emilia Romagna)
+- Circuit de Monaco (Monaco)
+- Circuit de Barcelona-Catalunya (Spain)
+- Grand Prix Circuit Gilles Villeneuve (Canada)
+- Red Bull Ring (Austria)
+- Silverstone Circuit (Britain)
+- Hungaroring (Hungary)
+- Circuit de Spa-Francorchamps (Belgium)
+- Circuit Zandvoort (Netherlands)
+- Monza Circuit (Italy)
+- Marina Bay Street Circuit (Singapore)
+- Lusail International Circuit (Qatar)
+- Circuit of the Americas (USA)
+- Autodromo Hermanos Rodriguez (Mexico)
+- Interlagos Circuit (Brazil)
+- Las Vegas Street Circuit (Las Vegas)
+- Yas Marina Circuit (Abu Dhabi)
+- Portimao (Portugal)
+- Shanghai (China)
+- Paul Ricard (France)
