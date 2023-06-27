@@ -40,6 +40,7 @@ Recorded telemetry
 - Fix to tyre wear in damage window
 - Flags for each marshal zone displayed with safety car indicator
 - Race strategy prediction
+- Recording of the race and qualifying sessions
 
 ### Track Maps
 
