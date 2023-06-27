@@ -1,8 +1,6 @@
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
 #include "formatting.hpp"
-#include "enums.hpp"
-#include "analysis.hpp"
 #include "compiled_protos/RaceWeekend.pb.h"
 
 #include <ostream>
@@ -1007,21 +1005,23 @@ void MainWindow::updateLoadedRaceWeekendData() {
     std::vector<double> tyreValues(tyreDegradationPlotValues.begin(), tyreDegradationPlotValues.end());
     std::vector<double> distanceValues(lapDistancePlotValues.begin(), lapDistancePlotValues.end());
 
-    LinearRegressionResult fuelRegression = calculateLinearRegression(distanceValues, fuelValues);
+    predictedFuelRegression = calculateLinearRegression(distanceValues, fuelValues);
     LinearRegressionResult tyreRegression = calculateLinearRegression(distanceValues, tyreValues);
 
     ui->pltFuelUsage->graph(0)->setData(lapDistancePlotValues, fuelUsagePlotValues);
     ui->pltFuelUsage->rescaleAxes();
-    plotRegressionLine(ui->pltFuelUsage, fuelRegression);
+    plotRegressionLine(ui->pltFuelUsage, predictedFuelRegression);
 
-    ui->lblFuelUsagePerLap->setText(QString::number(std::abs(fuelRegression.gradient) * loadedRaceWeekend.track_length()) + " kg/lap");
+    ui->lblFuelUsagePerLap->setText(QString::number(abs(predictedFuelRegression.gradient) * loadedRaceWeekend.track_length()) + " kg/lap");
 
     ui->pltTyreDegradation->graph(0)->setData(lapDistancePlotValues, tyreDegradationPlotValues);
     ui->pltTyreDegradation->rescaleAxes();
     plotRegressionLine(ui->pltTyreDegradation, tyreRegression);
 
+    updateFuelPrediction();
+
     // TODO: previous linear regression needs to be cleared each load
-    ui->lblTyreDegradationPerLap->setText(QString::number(std::abs(tyreRegression.gradient) * loadedRaceWeekend.track_length()) + " %/lap");
+    ui->lblTyreDegradationPerLap->setText(QString::number(abs(tyreRegression.gradient) * loadedRaceWeekend.track_length()) + " %/lap");
 }
 
 
@@ -1188,5 +1188,44 @@ void MainWindow::updateRecordedTelemetryGraphs() {
     ui->pltRecordedSteering->graph(0)->setData(distanceRecordedValues, steeringRecordedValues);
     ui->pltRecordedSteering->xAxis->setRange(0, loadedRaceWeekend.track_length());
     ui->pltRecordedSteering->replot();
+}
+
+
+void MainWindow::on_btnPredictedLapsPlus1_clicked()
+{
+    predictedLaps += 1;
+    ui->lblPredictedTotalLaps->setText(QString::number(predictedLaps) + " Laps");
+    updateFuelPrediction();
+}
+
+
+void MainWindow::on_btnPredictedLapsMinus1_clicked()
+{
+    // Only minus if result is > 0;
+    if (predictedLaps > 1) predictedLaps -= 1;
+    ui->lblPredictedTotalLaps->setText(QString::number(predictedLaps) + " Laps");
+    updateFuelPrediction();
+}
+
+
+void MainWindow::on_btnPredictedLapsPlus10_clicked()
+{
+    predictedLaps += 10;
+    ui->lblPredictedTotalLaps->setText(QString::number(predictedLaps) + " Laps");
+    updateFuelPrediction();
+}
+
+
+void MainWindow::on_btnPredictedLapsMinus10_clicked()
+{
+    // Only minus if result is > 0;
+    if (predictedLaps > 10) predictedLaps -= 10;
+    ui->lblPredictedTotalLaps->setText(QString::number(predictedLaps) + " Laps");
+    updateFuelPrediction();
+}
+
+void MainWindow::updateFuelPrediction() {
+    std::cout << "HELLO" << std::endl;
+    ui->lblPredictedFuel->setText(QString::number(predictedLaps * loadedRaceWeekend.track_length() * abs(predictedFuelRegression.gradient)) + " kg");
 }
 

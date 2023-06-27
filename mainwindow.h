@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include "analysis.hpp"
 #include "udp_updater.h"
 #include "gui_types.hpp"
 #include "enums.hpp"
@@ -59,6 +60,10 @@ private:
     void updateRecordedTelemetryGraphs();
     Lap selectedLoadedLap1;
 
+    uint8_t predictedLaps = 0;
+    LinearRegressionResult predictedFuelRegression;
+    void updateFuelPrediction();
+
 protected:
     void timerEvent(QTimerEvent *event);
 
@@ -102,5 +107,9 @@ private slots:
     void on_ddSelectLoadedStintType_currentIndexChanged(int index);
     void on_ddSelectLoadedStintNumber_currentIndexChanged(int index);
     void on_ddSelectLoadedLapNumberTelemetryLap1_currentIndexChanged(int index);
+    void on_btnPredictedLapsPlus1_clicked();
+    void on_btnPredictedLapsMinus1_clicked();
+    void on_btnPredictedLapsPlus10_clicked();
+    void on_btnPredictedLapsMinus10_clicked();
 };
 #endif // MAINWINDOW_H

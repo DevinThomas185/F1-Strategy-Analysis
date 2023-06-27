@@ -124,7 +124,7 @@
      </sizepolicy>
     </property>
     <property name="currentIndex">
-     <number>6</number>
+     <number>5</number>
     </property>
     <property name="usesScrollButtons">
      <bool>false</bool>
@@ -6149,7 +6149,7 @@
        <rect>
         <x>900</x>
         <y>460</y>
-        <width>361</width>
+        <width>571</width>
         <height>81</height>
        </rect>
       </property>
@@ -6176,6 +6176,9 @@
          <property name="text">
           <string>0 kg/lap</string>
          </property>
+         <property name="alignment">
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
         </widget>
        </item>
        <item row="1" column="0">
@@ -6199,6 +6202,91 @@
          </property>
          <property name="text">
           <string>0 %/lap</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="gridLayoutWidget_6">
+      <property name="geometry">
+       <rect>
+        <x>900</x>
+        <y>550</y>
+        <width>571</width>
+        <height>105</height>
+       </rect>
+      </property>
+      <layout class="QGridLayout" name="gridLayout_6">
+       <item row="0" column="2">
+        <widget class="QLabel" name="lblPredictedFuel">
+         <property name="font">
+          <font>
+           <pointsize>20</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>0 kg</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QPushButton" name="btnPredictedLapsPlus1">
+         <property name="text">
+          <string>+1</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="0" colspan="2">
+        <widget class="QLabel" name="lblPredictedFuelTitle">
+         <property name="font">
+          <font>
+           <pointsize>20</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>Predicted Race Fuel Load</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QPushButton" name="btnPredictedLapsMinus1">
+         <property name="text">
+          <string>-1</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QPushButton" name="btnPredictedLapsPlus10">
+         <property name="text">
+          <string>+10</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QPushButton" name="btnPredictedLapsMinus10">
+         <property name="text">
+          <string>-10</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="2" rowspan="2">
+        <widget class="QLabel" name="lblPredictedTotalLaps">
+         <property name="font">
+          <font>
+           <pointsize>20</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>0 Laps</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
          </property>
         </widget>
        </item>
