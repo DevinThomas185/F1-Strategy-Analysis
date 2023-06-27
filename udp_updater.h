@@ -71,6 +71,7 @@ signals:
     void LapHistoryTableUpdate(LapHistoryTable);
     void PositionalDataMapUpdate(PositionalDataMap);
     void SessionTypeUpdate(SessionType);
+    void SafetyCarStatusUpdate(SafetyCarStatus);
 
 public slots:
 };

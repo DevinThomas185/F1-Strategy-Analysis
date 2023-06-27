@@ -665,7 +665,7 @@ Formula getFormula(const uint8_t formula);
 enum SafetyCarStatus {
     NO_SAFETY_CAR = 0,
     FULL_SAFETY_CAR = 1,
-    VIRTUAL = 2,
+    VIRTUAL_SAFETY_CAR = 2,
     FORMATION_LAP = 3,
 };
 

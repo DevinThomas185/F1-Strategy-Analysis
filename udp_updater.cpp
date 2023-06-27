@@ -128,6 +128,10 @@ void UDPUpdater::handleSessionPacket(const PacketData& packet) {
     }
     emit WeatherUpdate(wd);
 
+    // Send safety car status
+
+    emit SafetyCarStatusUpdate(getSafetyCarStatus(sessionData.safetyCarStatus));
+
 
     if (totalLaps != sessionData.totalLaps) {
         totalLaps = sessionData.totalLaps;
@@ -334,9 +338,7 @@ void UDPUpdater::handleParticipantsPacket(const PacketData& packet) {
     }
 }
 
-void UDPUpdater::handleCarSetupPacket(const PacketData& packet) {
-
-}
+void UDPUpdater::handleCarSetupPacket(const PacketData& packet) {}
 
 std::string getRevLights(uint16_t n) {
     int bits = std::bitset < 16 > (n).count();

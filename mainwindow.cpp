@@ -25,6 +25,10 @@ Colour COLD_BLUE = Colour(4, 212, 212);
 Colour HEALTHY_GREEN = Colour(27, 171, 5);
 Colour BROKEN_RED = Colour(171, 5, 5);
 
+Colour GREEN_FLAG = Colour(6, 204, 42);
+Colour YELLOW_FLAG = Colour(214, 197, 2);
+Colour BLUE_FLAG = Colour(0, 76, 207);
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -52,6 +56,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(updater, SIGNAL(LapHistoryTableUpdate(LapHistoryTable)), this, SLOT(onLapHistoryTableUpdate(LapHistoryTable)));
     connect(updater, SIGNAL(PositionalDataMapUpdate(PositionalDataMap)), this, SLOT(onPositionalDataMapUpdate(PositionalDataMap)));
     connect(updater, SIGNAL(SessionTypeUpdate(SessionType)), this, SLOT(onSessionTypeUpdate(SessionType)));
+    connect(updater, SIGNAL(SafetyCarStatusUpdate(SafetyCarStatus)), this, SLOT(onSafetyCarStatusUpdate(SafetyCarStatus)));
     connect(&updater->raceRecorder, SIGNAL(StintStarted(StintType)), this, SLOT(onStintStarted(StintType)));
     connect(&updater->raceRecorder, SIGNAL(StintEnded(StintType)), this, SLOT(onStintEnded(StintType)));
 
@@ -784,6 +789,27 @@ void MainWindow::onStintStarted(StintType stintType) {
 
 void MainWindow::onStintEnded(StintType stintType) {
     ui->lblStintStatus->setText(QString::fromStdString("🔴 " + getStintTypeString(stintType)));
+}
+
+void MainWindow::onSafetyCarStatusUpdate(SafetyCarStatus safetyCarStatus) {
+    switch (safetyCarStatus) {
+    case SafetyCarStatus::NO_SAFETY_CAR:
+        ui->lblSafetyCarStatus->setText("");
+        ui->lblSafetyCarStatus->setStyleSheet(QString::fromStdString("background-color: " + GREEN_FLAG.getHexCode()));
+        break;
+    case SafetyCarStatus::FORMATION_LAP:
+        ui->lblSafetyCarStatus->setText("FORMATION LAP");
+        ui->lblSafetyCarStatus->setStyleSheet(QString::fromStdString("background-color: " + BLUE_FLAG.getHexCode()));
+        break;
+    case SafetyCarStatus::VIRTUAL_SAFETY_CAR:
+        ui->lblSafetyCarStatus->setText("VIRTUAL SAFETY CAR");
+        ui->lblSafetyCarStatus->setStyleSheet(QString::fromStdString("background-color: " + YELLOW_FLAG.getHexCode()));
+        break;
+    case SafetyCarStatus::FULL_SAFETY_CAR:
+        ui->lblSafetyCarStatus->setText("SAFETY CAR");
+        ui->lblSafetyCarStatus->setStyleSheet(QString::fromStdString("background-color: " + YELLOW_FLAG.getHexCode()));
+        break;
+    }
 }
 
 

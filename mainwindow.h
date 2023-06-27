@@ -86,6 +86,8 @@ public slots:
     void onSessionTypeUpdate(SessionType);
     void onStintStarted(StintType);
     void onStintEnded(StintType);
+    void onSafetyCarStatusUpdate(SafetyCarStatus);
+
 
 private slots:
     void on_ddSelectDriver_currentIndexChanged(int index);

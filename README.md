@@ -36,11 +36,10 @@ Recorded telemetry
 
 ## Upcoming Features
 
-- Flags and safety car status shown in events announcements
-- Marshal flags shown by section
 - IP and Port input in settings menu bar
 - Fix to tyre wear in damage window
 - Flags for each marshal zone displayed with safety car indicator
+- Race strategy prediction
 
 ### Track Maps
 

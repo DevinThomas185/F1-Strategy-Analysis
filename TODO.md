@@ -14,9 +14,10 @@
 
 - Fuel estimate for race seems to be far too high
 
+- The positions table for non-race sessions is broken (interval)
+
 ## Features
 
-- Show flags (on events announcement)
 - Show marshal flags
 - Put vertical lines for each turn on the graphs
 - Tyre pressures in damage
@@ -25,3 +26,5 @@
 - Add support for F1 23 packets
 - Add current setup for car
 - Add time delta to the steering wheel
+- Add current tyres to the positions screen
+- Ability to write to loaded files

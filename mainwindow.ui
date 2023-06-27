@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1500</width>
-    <height>900</height>
+    <height>1015</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -26,7 +26,7 @@
       <x>10</x>
       <y>0</y>
       <width>1481</width>
-      <height>95</height>
+      <height>105</height>
      </rect>
     </property>
     <layout class="QGridLayout" name="gridLayout">
@@ -91,7 +91,7 @@
        </property>
       </widget>
      </item>
-     <item row="1" column="0">
+     <item row="1" column="0" rowspan="2">
       <widget class="QLabel" name="lblSession">
        <property name="font">
         <font>
@@ -106,13 +106,28 @@
        </property>
       </widget>
      </item>
+     <item row="2" column="1" colspan="3">
+      <widget class="QLabel" name="lblSafetyCarStatus">
+       <property name="font">
+        <font>
+         <pointsize>20</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>Safety Car Status</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+      </widget>
+     </item>
     </layout>
    </widget>
    <widget class="QTabWidget" name="dataTabs">
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>90</y>
+      <y>200</y>
       <width>1481</width>
       <height>761</height>
      </rect>
@@ -124,7 +139,7 @@
      </sizepolicy>
     </property>
     <property name="currentIndex">
-     <number>5</number>
+     <number>1</number>
     </property>
     <property name="usesScrollButtons">
      <bool>false</bool>
