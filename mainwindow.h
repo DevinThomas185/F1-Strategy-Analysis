@@ -44,6 +44,8 @@ private:
     uint32_t targetLapTimeMS = 0;
 
     uint16_t trackLength = 0;
+    TrackID trackId;
+    void setTrackMap();
     double zoomStart = 0;
     double zoomEnd = trackLength;
     void setZooms();
@@ -78,6 +80,7 @@ public slots:
     void onPlotTelemetryUpdate(PlotTelemetryData);
     void onTotalLapsUpdate(uint8_t);
     void onTrackLengthUpdate(uint16_t);
+    void onTrackUpdate(TrackID);
     void onWheelLapUpdate(WheelLapData);
     void onLapDistanceUpdate(float);
     void onWheelStatusUpdate(WheelStatusData);

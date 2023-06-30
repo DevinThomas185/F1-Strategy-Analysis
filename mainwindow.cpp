@@ -50,6 +50,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(updater, SIGNAL(PlotTelemetryUpdate(PlotTelemetryData)), this, SLOT(onPlotTelemetryUpdate(PlotTelemetryData)));
     connect(updater, SIGNAL(TotalLapsUpdate(uint8_t)), this, SLOT(onTotalLapsUpdate(uint8_t)));
     connect(updater, SIGNAL(TrackLengthUpdate(uint16_t)), this, SLOT(onTrackLengthUpdate(uint16_t)));
+    connect(updater, SIGNAL(TrackUpdate(TrackID)), this, SLOT(onTrackUpdate(TrackID)));
     connect(updater, SIGNAL(WheelLapUpdate(WheelLapData)), this, SLOT(onWheelLapUpdate(WheelLapData)));
     connect(updater, SIGNAL(LapDistanceUpdate(float)), this, SLOT(onLapDistanceUpdate(float)));
     connect(updater, SIGNAL(WheelStatusUpdate(WheelStatusData)), this, SLOT(onWheelStatusUpdate(WheelStatusData)));
@@ -144,30 +145,11 @@ void MainWindow::setupPlots() {
     ui->pltRecordedSteering->yAxis->setLabel("Steering (%)");
     ui->pltRecordedSteering->yAxis->setRange(-100, 100);
 
-    // Track Map
-    ui->pltTrackMap->addGraph();
-
-    QCPScatterStyle scatterStyle;
-    scatterStyle.setShape(QCPScatterStyle::ssCircle);
-    scatterStyle.setSize(6);
-    scatterStyle.setPen(QPen(Qt::blue));
-    scatterStyle.setBrush(QBrush(Qt::red));
-    ui->pltTrackMap->graph(0)->setScatterStyle(scatterStyle);
-    ui->pltTrackMap->graph(0)->setLineStyle(QCPGraph::lsNone);
-
+    // Track Map (not track specific settings)
     ui->pltTrackMap->xAxis->setTicks(false);
     ui->pltTrackMap->yAxis->setTicks(false);
     ui->pltTrackMap->xAxis->grid()->setVisible(false);
     ui->pltTrackMap->yAxis->grid()->setVisible(false);
-
-    ui->pltTrackMap->xAxis->setRange(-800, 800);
-    ui->pltTrackMap->yAxis->setRange(-800, 800);
-
-    QCPItemPixmap *background = new QCPItemPixmap(ui->pltTrackMap);
-    background->setPixmap(QPixmap(":/images/tracks/bahrain.png")); // Set the path to your image
-    background->topLeft->setCoords(-800, 800); // Set the top-left coordinates of the image
-    background->bottomRight->setCoords(800, -800); // Set the bottom-right coordinates of the image
-    background->setScaled(true, Qt::IgnoreAspectRatio);
 
     // Fuel Usage
     ui->pltFuelUsage->addGraph();
@@ -241,6 +223,113 @@ void MainWindow::onTrackLengthUpdate(uint16_t tl) {
     on_btnResetZoom_clicked(); // Do the same as a reset
 }
 
+void MainWindow::onTrackUpdate(TrackID tId) {
+    trackId = tId;
+
+    // Set track map dimensions and image
+    setTrackMap();
+}
+
+void MainWindow::setTrackMap() {
+    ui->pltTrackMap->clearGraphs();
+
+    int minX, maxX, minY, maxY = 0;
+    std::string trackImageName;
+
+    switch (trackId) {
+    case MELBOURNE:
+        break;
+    case PAUL_RICARD:
+        break;
+    case SHANGHAI:
+        break;
+    case SAKHIR:
+        minX = -800;
+        maxX = 800;
+        minY = -800;
+        maxY = 800;
+        trackImageName = "sakhir.png";
+        break;
+    case CATALUNYA:
+        break;
+    case MONACO:
+        break; 
+    case MONTREAL:
+        break;
+    case SILVERSTONE:
+        break;
+    case HOCKENHEIM:
+        break;
+    case HUNGARORING:
+        break;
+    case SPA:
+        break;
+    case MONZA:
+        break;
+    case SINGAPORE:
+        break;
+    case SUZUKA:
+        break;
+    case ABU_DHABI:
+        break;
+    case TEXAS:
+        break;
+    case BRAZIL:
+        break;
+    case AUSTRIA:
+        break;
+    case SOCHI:
+        break;
+    case MEXICO:
+        break;
+    case BAKU:
+        break;
+    case SAKHIR_SHORT:
+        break;
+    case SILVERSTONE_SHORT:
+        break;
+    case TEXAS_SHORT:
+        break;
+    case SUZUKA_SHORT:
+        break;
+    case HANOI:
+        break;
+    case ZANDVOORT:
+        break;
+    case IMOLA:
+        break;
+    case PORTIMAO:
+        break;
+    case JEDDAH:
+        minX = -1700;
+        maxX = 1700;
+        minY = -700;
+        maxY = 700;
+        trackImageName = "jeddah.jpg";
+        break;
+    case MIAMI:
+        break;
+    }
+
+    ui->pltTrackMap->addGraph();
+
+    QCPScatterStyle scatterStyle;
+    scatterStyle.setShape(QCPScatterStyle::ssCircle);
+    scatterStyle.setSize(6);
+    scatterStyle.setPen(QPen(Qt::blue));
+    ui->pltTrackMap->graph(0)->setScatterStyle(scatterStyle);
+    ui->pltTrackMap->graph(0)->setLineStyle(QCPGraph::lsNone);
+
+    ui->pltTrackMap->xAxis->setRange(minX, maxX);
+    ui->pltTrackMap->yAxis->setRange(minY, maxY);
+
+    QCPItemPixmap *background = new QCPItemPixmap(ui->pltTrackMap);
+    background->setPixmap(QPixmap(QString::fromStdString(":/images/tracks/" + trackImageName))); // Set the path to your image
+    background->topLeft->setCoords(minX, maxY); // Set the top-left coordinates of the image
+    background->bottomRight->setCoords(maxX, minY); // Set the bottom-right coordinates of the image
+    background->setScaled(true, Qt::IgnoreAspectRatio);
+}
+
 void MainWindow::on_btnResetZoom_clicked()
 {
     zoomStart = 0;
@@ -281,6 +370,8 @@ void MainWindow::onPlotTelemetryUpdate(PlotTelemetryData plotTelemetry) {
 }
 
 void MainWindow::onPositionalDataMapUpdate(PositionalDataMap positionalDataMap) {
+    // Return if the map is not set yet
+    if (ui->pltTrackMap->graphCount() == 0) return;
 
     // Remove labels
     for (int i = ui->pltTrackMap->itemCount() - 1; i >= 0; --i)
@@ -293,7 +384,7 @@ void MainWindow::onPositionalDataMapUpdate(PositionalDataMap positionalDataMap) 
 
     // Plot z/x to rotate the map
     for (size_t i = 0; i < positionalDataMap.size(); i++) {
-        PositionalData pd = positionalDataMap[i];
+        PositionalData pd = positionalDataMap[i]; // SHOULD BE i // CHANGE BACK
         ui->pltTrackMap->graph(0)->addData(pd.z, pd.x);
 
         // Add driver name label at each data point

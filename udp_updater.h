@@ -64,6 +64,7 @@ signals:
     void WheelTelemetryUpdate(WheelTelemetryData);
     void TotalLapsUpdate(uint8_t);
     void TrackLengthUpdate(uint16_t);
+    void TrackUpdate(TrackID);
     void WheelLapUpdate(WheelLapData);
     void LapDistanceUpdate(float);
     void WheelStatusUpdate(WheelStatusData);

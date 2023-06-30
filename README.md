@@ -44,7 +44,6 @@ Recorded telemetry
 
 ### Track Maps
 
-- Jeddah Corniche Circuit (Saudi Arabia)
 - Albert Park (Australia)
 - Baku City Circuit (Azerbaijan)
 - Miami International Autodrome (Miami)

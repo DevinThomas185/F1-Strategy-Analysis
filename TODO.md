@@ -16,6 +16,10 @@
 
 - The positions table for non-race sessions is broken (interval)
 
+- Attempting to start recording a stint after starting listening, but not receiving any packets, should not crash the program
+
+- Fix the Jeddah track being too high
+
 ## Features
 
 - Show marshal flags
@@ -27,4 +31,4 @@
 - Add current setup for car
 - Add time delta to the steering wheel
 - Add current tyres to the positions screen
-- Ability to write to loaded files
+- Ability to write to already loaded files

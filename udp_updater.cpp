@@ -145,7 +145,7 @@ void UDPUpdater::handleSessionPacket(const PacketData& packet) {
 
     if (track != getTrackID(sessionData.trackId)) {
         track = getTrackID(sessionData.trackId);
-//        emit TrackUpdate(track);
+        emit TrackUpdate(track);
     }
 
     if (sessionType != getSessionType(sessionData.sessionType)) {
