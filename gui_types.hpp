@@ -23,6 +23,12 @@ struct Participants {
 
 using EventAnnouncement = std::string;
 
+struct TyreData {
+    ActualTyreCompound actualTyreCompound;
+    VisualTyreCompound visualTyreCompound;
+    uint8_t tyreAge;
+};
+
 struct PositionsTableRow {
     size_t _carIdx;
     LapData _lapData;
@@ -33,6 +39,7 @@ struct PositionsTableRow {
     std::string sector2;
     std::string lastlap;
     std::string interval;
+    TyreData tyreData;
 };
 
 using PositionsTable = std::vector<PositionsTableRow>;

@@ -186,7 +186,8 @@ void UDPUpdater::handleLapPacket(const PacketData& packet){
             .sector1 = formatSectorMS(ld.sector1TimeInMS),
             .sector2 = formatSectorMS(ld.sector2TimeInMS),
             .lastlap = formatLapTimeMS(ld.lastLapTimeInMS),
-            .interval = "---" // TEMPORARY
+            .interval = "---", // TEMPORARY
+            .tyreData = driverTyreData[i],
         };
         rows.push_back(row);
     }
@@ -410,6 +411,17 @@ void UDPUpdater::handleCarTelemetryPacket(const PacketData& packet){
 
 void UDPUpdater::handleCarStatusPacket(const PacketData& packet){
     const PacketCarStatusData statusData = packet.packet.carStatusData;
+
+    // Update map for current tyre data
+    for (size_t i = 0; i < participants_.size(); i++) {
+        CarStatusData sd = statusData.carStatusData[i];
+        TyreData td = {
+            .actualTyreCompound = getActualTyreCompound(sd.actualTyreCompound),
+            .visualTyreCompound = getVisualTyreCompound(sd.visualTyreCompound),
+            .tyreAge = sd.tyresAgeLaps,
+        };
+        driverTyreData[i] = td;
+    }
 
     CarStatusData sd = statusData.carStatusData[driverSelected];
 

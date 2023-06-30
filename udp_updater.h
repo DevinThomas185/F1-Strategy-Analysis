@@ -54,6 +54,9 @@ private:
     // Map of carIdx -> (map of lap -> (map of lapDistance -> currentLapTimeinMS)
     std::array<std::array<std::map<uint16_t, uint32_t>, 100>, 22> driverIntervalTimes;
 
+    // Map of carIdx -> Tyre data (Actual, Visual and Tyre Age)
+    std::array<TyreData, 22> driverTyreData;
+
 signals:
     void ParticipantsUpdate(Participants);
     void EventAnnouncementUpdate(EventAnnouncement);

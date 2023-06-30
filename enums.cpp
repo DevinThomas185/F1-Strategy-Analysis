@@ -108,7 +108,7 @@ std::string getTrackString(TrackID trackID) {
     case SUZUKA_SHORT:
         return "Japan";
     case ABU_DHABI:
-        return "AbuDhabi";
+        return "Abu Dhabi";
     case TEXAS:
     case TEXAS_SHORT:
         return "USA";
@@ -131,7 +131,7 @@ std::string getTrackString(TrackID trackID) {
     case PORTIMAO:
         return "Portugal";
     case JEDDAH:
-        return "SaudiArabia";
+        return "Saudi Arabia";
     case MIAMI:
         return "Miami";
     default:

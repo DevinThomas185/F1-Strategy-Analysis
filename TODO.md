@@ -28,5 +28,4 @@
 - Add support for F1 23 packets
 - Add current setup for car
 - Add time delta to the steering wheel
-- Add current tyres to the positions screen
 - Ability to write to already loaded files

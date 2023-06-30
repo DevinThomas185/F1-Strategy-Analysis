@@ -232,6 +232,7 @@ void MainWindow::onTrackUpdate(TrackID tId) {
 
 void MainWindow::setTrackMap() {
     ui->pltTrackMap->clearGraphs();
+    ui->lblRaceWeekend->setText(QString::fromStdString(getTrackString(trackId)));
 
     int minX, maxX, minY, maxY = 0;
     std::string trackImageName;
@@ -478,6 +479,13 @@ void MainWindow::onPositionsTableUpdate(PositionsTable positionsTable)
         interval->setFlags(interval->flags() &  ~Qt::ItemIsEditable);
         interval->setFont(font);
         ui->tblPositionsTable->setItem(r, 6, interval);
+
+        QTableWidgetItem *tyreAge = new QTableWidgetItem(QString::number(row.tyreData.tyreAge));
+        tyreAge->setFlags(tyreAge->flags() &  ~Qt::ItemIsEditable);
+        tyreAge->setTextAlignment(Qt::AlignCenter);
+        tyreAge->setFont(font);
+        tyreAge->setForeground(QBrush(QColor(QString::fromStdString(getVisualTyreColour(row.tyreData.visualTyreCompound).getHexCode()))));
+        ui->tblPositionsTable->setItem(r, 7, tyreAge);
     }
 }
 
