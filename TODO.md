@@ -22,7 +22,6 @@
 
 - Show marshal flags
 - Put vertical lines for each turn on the graphs
-- Tyre pressures in damage
 - Tyre strategy for entire race
 - Overlay traces of telemetry
 - Add support for F1 23 packets
