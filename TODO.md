@@ -10,8 +10,6 @@
 
 - Fuel and tyre degradation graphs need to clear the regression lines after changing stint number / stint type / session.
 
-- Loaded track map picture should come from the track_id, not be hard coded
-
 - Fuel estimate for race seems to be far too high
 
 - The positions table for non-race sessions is broken (interval)
