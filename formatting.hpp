@@ -21,4 +21,8 @@ std::string formatIntervalTime(uint32_t intervalMS, uint8_t leadDriverLap, uint8
 
 std::string formatDelta(uint32_t target, uint32_t actual);
 
+std::string formatTemperature(uint16_t temperature);
+
+std::string formatPressure(float pressure);
+
 #endif  // FORMATTING_HPP

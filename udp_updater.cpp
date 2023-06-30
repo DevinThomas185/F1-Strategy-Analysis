@@ -339,7 +339,14 @@ void UDPUpdater::handleParticipantsPacket(const PacketData& packet) {
     }
 }
 
-void UDPUpdater::handleCarSetupPacket(const PacketData& packet) {}
+void UDPUpdater::handleCarSetupPacket(const PacketData& packet) {
+    const PacketCarSetupData setupData = packet.packet.carSetupData;
+
+    // TODO: Do not keep updating the setup packet, just do it once
+    for (size_t i = 0; i < participants_.size(); i++) {
+        driverCarSetup[i] = setupData.carSetups[i];
+    }
+}
 
 std::string getRevLights(uint16_t n) {
     int bits = std::bitset < 16 > (n).count();
@@ -377,6 +384,11 @@ void UDPUpdater::handleCarTelemetryPacket(const PacketData& packet){
         .rearRightPressure = td.tyresPressure[REAR_RIGHT],
         .frontLeftPressure = td.tyresPressure[FRONT_LEFT],
         .frontRightPressure = td.tyresPressure[FRONT_RIGHT],
+
+        .setupRearLeftPressure = driverCarSetup[driverSelected].rearLeftTyrePressure,
+        .setupRearRightPressure = driverCarSetup[driverSelected].rearRightTyrePressure,
+        .setupFrontLeftPressure = driverCarSetup[driverSelected].frontLeftTyrePressure,
+        .setupFrontRightPressure = driverCarSetup[driverSelected].frontRightTyrePressure,
     };
 
     emit TemperaturePressureUpdate(tempsPressure);

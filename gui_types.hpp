@@ -118,6 +118,11 @@ struct TemperaturePressureData {
     float rearRightPressure;
     float frontLeftPressure;
     float frontRightPressure;
+
+    float setupRearLeftPressure;
+    float setupRearRightPressure;
+    float setupFrontLeftPressure;
+    float setupFrontRightPressure;
 };
 
 struct WheelTelemetryData {

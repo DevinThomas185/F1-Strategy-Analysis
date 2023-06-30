@@ -57,6 +57,9 @@ private:
     // Map of carIdx -> Tyre data (Actual, Visual and Tyre Age)
     std::array<TyreData, 22> driverTyreData;
 
+    // Map of carIdx -> Car Setup
+    std::array<CarSetupData, 22> driverCarSetup;
+
 signals:
     void ParticipantsUpdate(Participants);
     void EventAnnouncementUpdate(EventAnnouncement);

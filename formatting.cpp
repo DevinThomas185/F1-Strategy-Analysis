@@ -99,4 +99,13 @@ std::string formatDelta(uint32_t target, uint32_t actual) {
     return deltaString;
 }
 
+std::string formatTemperature(uint16_t temperature) {
+    return std::to_string(temperature) + "°C";
+}
+
+std::string formatPressure(float pressure) {
+    std::ostringstream stream;
+    stream << std::fixed << std::setprecision(1) << pressure << " PSI";
+    return stream.str();
+}
 

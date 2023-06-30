@@ -160,7 +160,7 @@
      </sizepolicy>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>1</number>
     </property>
     <property name="usesScrollButtons">
      <bool>false</bool>
@@ -2539,7 +2539,7 @@
           <x>-1</x>
           <y>4</y>
           <width>71</width>
-          <height>221</height>
+          <height>231</height>
          </rect>
         </property>
         <layout class="QHBoxLayout" name="horizontalLayout_9">
@@ -2625,7 +2625,7 @@
           <x>-1</x>
           <y>4</y>
           <width>71</width>
-          <height>221</height>
+          <height>231</height>
          </rect>
         </property>
         <layout class="QHBoxLayout" name="horizontalLayout_8">
@@ -4560,6 +4560,350 @@
            </property>
            <property name="text">
             <string>DRS: OK</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </widget>
+      <widget class="QWidget" name="wgtFrontRightPressure" native="true">
+       <property name="geometry">
+        <rect>
+         <x>730</x>
+         <y>220</y>
+         <width>71</width>
+         <height>111</height>
+        </rect>
+       </property>
+       <property name="palette">
+        <palette>
+         <active>
+          <colorrole role="Window">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>2</red>
+             <green>65</green>
+             <blue>6</blue>
+            </color>
+           </brush>
+          </colorrole>
+         </active>
+         <inactive>
+          <colorrole role="Window">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>2</red>
+             <green>65</green>
+             <blue>6</blue>
+            </color>
+           </brush>
+          </colorrole>
+         </inactive>
+         <disabled>
+          <colorrole role="Base">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>2</red>
+             <green>65</green>
+             <blue>6</blue>
+            </color>
+           </brush>
+          </colorrole>
+          <colorrole role="Window">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>2</red>
+             <green>65</green>
+             <blue>6</blue>
+            </color>
+           </brush>
+          </colorrole>
+         </disabled>
+        </palette>
+       </property>
+       <property name="autoFillBackground">
+        <bool>true</bool>
+       </property>
+       <widget class="QWidget" name="horizontalLayoutWidget_62">
+        <property name="geometry">
+         <rect>
+          <x>-1</x>
+          <y>4</y>
+          <width>73</width>
+          <height>111</height>
+         </rect>
+        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout_64">
+         <item>
+          <widget class="QLabel" name="lblFrontRightPressure">
+           <property name="font">
+            <font>
+             <pointsize>20</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>0 PSI</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </widget>
+      <widget class="QWidget" name="wgtRearRightPressure" native="true">
+       <property name="geometry">
+        <rect>
+         <x>730</x>
+         <y>340</y>
+         <width>71</width>
+         <height>111</height>
+        </rect>
+       </property>
+       <property name="palette">
+        <palette>
+         <active>
+          <colorrole role="Window">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>2</red>
+             <green>65</green>
+             <blue>6</blue>
+            </color>
+           </brush>
+          </colorrole>
+         </active>
+         <inactive>
+          <colorrole role="Window">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>2</red>
+             <green>65</green>
+             <blue>6</blue>
+            </color>
+           </brush>
+          </colorrole>
+         </inactive>
+         <disabled>
+          <colorrole role="Base">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>2</red>
+             <green>65</green>
+             <blue>6</blue>
+            </color>
+           </brush>
+          </colorrole>
+          <colorrole role="Window">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>2</red>
+             <green>65</green>
+             <blue>6</blue>
+            </color>
+           </brush>
+          </colorrole>
+         </disabled>
+        </palette>
+       </property>
+       <property name="autoFillBackground">
+        <bool>true</bool>
+       </property>
+       <widget class="QWidget" name="horizontalLayoutWidget_64">
+        <property name="geometry">
+         <rect>
+          <x>-1</x>
+          <y>4</y>
+          <width>73</width>
+          <height>111</height>
+         </rect>
+        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout_66">
+         <item>
+          <widget class="QLabel" name="lblRearRightPressure">
+           <property name="font">
+            <font>
+             <pointsize>20</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>0 PSI</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </widget>
+      <widget class="QWidget" name="wgtRearLeftPressure" native="true">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>340</y>
+         <width>71</width>
+         <height>111</height>
+        </rect>
+       </property>
+       <property name="palette">
+        <palette>
+         <active>
+          <colorrole role="Window">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>2</red>
+             <green>65</green>
+             <blue>6</blue>
+            </color>
+           </brush>
+          </colorrole>
+         </active>
+         <inactive>
+          <colorrole role="Window">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>2</red>
+             <green>65</green>
+             <blue>6</blue>
+            </color>
+           </brush>
+          </colorrole>
+         </inactive>
+         <disabled>
+          <colorrole role="Base">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>2</red>
+             <green>65</green>
+             <blue>6</blue>
+            </color>
+           </brush>
+          </colorrole>
+          <colorrole role="Window">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>2</red>
+             <green>65</green>
+             <blue>6</blue>
+            </color>
+           </brush>
+          </colorrole>
+         </disabled>
+        </palette>
+       </property>
+       <property name="autoFillBackground">
+        <bool>true</bool>
+       </property>
+       <widget class="QWidget" name="horizontalLayoutWidget_65">
+        <property name="geometry">
+         <rect>
+          <x>-1</x>
+          <y>4</y>
+          <width>73</width>
+          <height>111</height>
+         </rect>
+        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout_67">
+         <item>
+          <widget class="QLabel" name="lblRearLeftPressure">
+           <property name="font">
+            <font>
+             <pointsize>20</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>0 PSI</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </widget>
+      <widget class="QWidget" name="wgtFrontLeftPressure" native="true">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>220</y>
+         <width>71</width>
+         <height>111</height>
+        </rect>
+       </property>
+       <property name="palette">
+        <palette>
+         <active>
+          <colorrole role="Window">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>2</red>
+             <green>65</green>
+             <blue>6</blue>
+            </color>
+           </brush>
+          </colorrole>
+         </active>
+         <inactive>
+          <colorrole role="Window">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>2</red>
+             <green>65</green>
+             <blue>6</blue>
+            </color>
+           </brush>
+          </colorrole>
+         </inactive>
+         <disabled>
+          <colorrole role="Base">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>2</red>
+             <green>65</green>
+             <blue>6</blue>
+            </color>
+           </brush>
+          </colorrole>
+          <colorrole role="Window">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>2</red>
+             <green>65</green>
+             <blue>6</blue>
+            </color>
+           </brush>
+          </colorrole>
+         </disabled>
+        </palette>
+       </property>
+       <property name="autoFillBackground">
+        <bool>true</bool>
+       </property>
+       <widget class="QWidget" name="horizontalLayoutWidget_72">
+        <property name="geometry">
+         <rect>
+          <x>-1</x>
+          <y>4</y>
+          <width>73</width>
+          <height>111</height>
+         </rect>
+        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout_74">
+         <item>
+          <widget class="QLabel" name="lblFrontLeftPressure">
+           <property name="font">
+            <font>
+             <pointsize>20</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>0 PSI</string>
            </property>
            <property name="alignment">
             <set>Qt::AlignCenter</set>
