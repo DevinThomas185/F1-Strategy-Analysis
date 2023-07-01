@@ -65,8 +65,9 @@ FORMS += \
     mainwindow.ui
 
 RESOURCES += \
-    images/tracks/sakhir.png \
-    images/tracks/jeddah.jpg
+    images/tracks/sakhir.jpg \
+    images/tracks/jeddah.jpg \
+    images/tracks/melbourne.jpg
 
 PROTOBUF_PATH = /usr/local/Cellar/protobuf/21.12
 

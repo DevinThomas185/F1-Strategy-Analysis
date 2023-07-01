@@ -240,6 +240,11 @@ void MainWindow::setTrackMap() {
 
     switch (trackId) {
     case MELBOURNE:
+        minX = -1000;
+        maxX = 1000;
+        minY = -800;
+        maxY = 800;
+        trackImageName = "melbourne.jpg";
         break;
     case PAUL_RICARD:
         break;
@@ -250,7 +255,7 @@ void MainWindow::setTrackMap() {
         maxX = 800;
         minY = -800;
         maxY = 800;
-        trackImageName = "sakhir.png";
+        trackImageName = "sakhir.jpg";
         break;
     case CATALUNYA:
         break;

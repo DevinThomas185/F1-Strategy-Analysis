@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1500</width>
-    <height>1015</height>
+    <height>950</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -148,7 +148,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>200</y>
+      <y>120</y>
       <width>1481</width>
       <height>761</height>
      </rect>
@@ -160,7 +160,7 @@
      </sizepolicy>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>3</number>
     </property>
     <property name="usesScrollButtons">
      <bool>false</bool>
