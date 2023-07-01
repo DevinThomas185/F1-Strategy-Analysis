@@ -13,25 +13,39 @@ Additionally, the race engineer can record practice session laps and allocate th
 
 ## Features
 
-Positions table and weather forecast
+### Positions table and weather forecast
+
 ![](/demo_images/Positions.png "Positions Table and Weather Forecast")
 
-Car damage and steering wheel data
+### Car damage and steering wheel data
+
 ![](/demo_images/Damage.png "Car Damage and Steering Wheel")
 
-Telemetry traces
+### Telemetry traces
+
 ![](/demo_images/TelemetryTraces.png "Telemetry Traces")
 
-Lap history table
+### Lap history table
+
 ![](/demo_images/LapHistory.png "Lap History")
 
-Track map
+### Track map
+
 ![](/demo_images/TrackMap.png "Track map")
 
-Lap recording
+#### Completed Track Maps
+
+Only some of the track maps have been drawn and added to the software. These are listed below. The remaining tracks to be added are listed [here](#incomplete-track-maps).
+
+- Bahrain International Circuit (Bahrain)
+- Jeddah Corniche Circuit (Saudi Arabia)
+
+### Lap recording
+
 ![](/demo_images/LapRecording.png "Lap recording")
 
-Recorded telemetry
+### Recorded telemetry
+
 ![](/demo_images/RecordedTelemetry.png "Recorded Telemetry")
 
 ## Upcoming Features
@@ -42,7 +56,7 @@ Recorded telemetry
 - Race strategy prediction
 - Recording of the race and qualifying sessions
 
-### Track Maps
+### Incomplete Track Maps
 
 - Albert Park (Australia)
 - Baku City Circuit (Azerbaijan)

@@ -14,9 +14,19 @@
 
 - The positions table for non-race sessions is broken (interval)
 
-- Attempting to start recording a stint after starting listening, but not receiving any packets, should not crash the program
+- Attempting to start recording a stint after starting listening, but not receiving any packets, crashes the program
 
 - Fix the Jeddah track being too high
+
+- Tyre life for front left seems to not be updating all the time - intermittent and instant on crash
+
+- Positions change during practice shows +255
+
+- Need a stop button to end a stint early or to change to a new one?
+
+- Telemetry traces need to be aligned
+
+- Fuel prediction seems to be far too high (176kg predicted vs 105kg actual for Bahrain)
 
 ## Features
 

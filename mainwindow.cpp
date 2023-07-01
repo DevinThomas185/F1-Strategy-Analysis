@@ -1369,7 +1369,6 @@ void MainWindow::on_btnPredictedLapsMinus10_clicked()
 }
 
 void MainWindow::updateFuelPrediction() {
-    std::cout << "HELLO" << std::endl;
     ui->lblPredictedFuel->setText(QString::number(predictedLaps * loadedRaceWeekend.track_length() * abs(predictedFuelRegression.gradient)) + " kg");
 }
 

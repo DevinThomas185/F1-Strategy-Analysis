@@ -1330,9 +1330,9 @@
       <widget class="QWidget" name="wgtFrontLeftWing" native="true">
        <property name="geometry">
         <rect>
-         <x>90</x>
+         <x>10</x>
          <y>0</y>
-         <width>311</width>
+         <width>391</width>
          <height>41</height>
         </rect>
        </property>
@@ -1388,10 +1388,10 @@
        <widget class="QWidget" name="horizontalLayoutWidget_5">
         <property name="geometry">
          <rect>
-          <x>9</x>
-          <y>9</y>
-          <width>301</width>
-          <height>31</height>
+          <x>-1</x>
+          <y>-1</y>
+          <width>391</width>
+          <height>41</height>
          </rect>
         </property>
         <layout class="QHBoxLayout" name="horizontalLayout_3">
@@ -1863,7 +1863,7 @@
         <rect>
          <x>410</x>
          <y>0</y>
-         <width>311</width>
+         <width>391</width>
          <height>41</height>
         </rect>
        </property>
@@ -1920,9 +1920,9 @@
         <property name="geometry">
          <rect>
           <x>-1</x>
-          <y>9</y>
-          <width>311</width>
-          <height>31</height>
+          <y>-1</y>
+          <width>391</width>
+          <height>41</height>
          </rect>
         </property>
         <layout class="QHBoxLayout" name="horizontalLayout_4">
@@ -4400,10 +4400,10 @@
       <widget class="QWidget" name="wgtRearWing" native="true">
        <property name="geometry">
         <rect>
-         <x>90</x>
+         <x>10</x>
          <y>630</y>
-         <width>631</width>
-         <height>31</height>
+         <width>791</width>
+         <height>41</height>
         </rect>
        </property>
        <property name="palette">
@@ -4460,8 +4460,8 @@
          <rect>
           <x>-1</x>
           <y>-1</y>
-          <width>641</width>
-          <height>31</height>
+          <width>791</width>
+          <height>41</height>
          </rect>
         </property>
         <layout class="QHBoxLayout" name="horizontalLayout_5">
@@ -4486,9 +4486,9 @@
       <widget class="QWidget" name="wgtDRS" native="true">
        <property name="geometry">
         <rect>
-         <x>120</x>
-         <y>670</y>
-         <width>571</width>
+         <x>10</x>
+         <y>680</y>
+         <width>791</width>
          <height>41</height>
         </rect>
        </property>
@@ -4546,7 +4546,7 @@
          <rect>
           <x>-1</x>
           <y>-1</y>
-          <width>581</width>
+          <width>791</width>
           <height>41</height>
          </rect>
         </property>
