@@ -87,6 +87,11 @@ void UDPUpdater::run()
     }
 }
 
+void UDPUpdater::changeIPandPort(std::string newIP, std::string newPort) {
+    udp_listener.changeIPandPort(newIP, newPort);
+}
+
+
 void UDPUpdater::handleMotionPacket(const PacketData& packet) {
     const PacketMotionData motionData = packet.packet.motionData;
 

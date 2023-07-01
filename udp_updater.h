@@ -19,6 +19,7 @@ public:
     void run();
     UDPListener udp_listener;
     bool enable_listening = false;
+    void changeIPandPort(std::string new_ip, std::string new_port);
 
     void handleMotionPacket(const PacketData& packet);
     void handleSessionPacket(const PacketData& packet);

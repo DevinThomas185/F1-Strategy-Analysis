@@ -51,11 +51,17 @@ Only some of the track maps have been drawn and added to the software. These are
 
 ## Upcoming Features
 
-- IP and Port input in settings menu bar
-- Fix to tyre wear in damage window
-- Flags for each marshal zone displayed with safety car indicator
-- Race strategy prediction
-- Recording of the race and qualifying sessions
+[List of upcoming features](TODO.md#features)
+
+## Recently Complete Features
+
+- IP and Port changable in settings bar
+- Albert Park (Australia) track added
+- Pressures added to damage tab
+- Current tyres with tyre age added to positions table
+- Jeddah Corniche Circuit (Saudi Arabia) track added
+- Safety car announcements
+- Race fuel prediction
 
 ### Incomplete Track Maps
 

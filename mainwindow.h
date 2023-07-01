@@ -6,6 +6,7 @@
 #include "udp_updater.h"
 #include "gui_types.hpp"
 #include "enums.hpp"
+#include "udpsettings.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -22,6 +23,7 @@ public:
 
 private:
     Ui::MainWindow *ui;
+    UDPSettings udpSettings;
     int timerId;
 
     uint8_t playerCarIdx;
@@ -61,6 +63,7 @@ private:
 
     void updateRecordedTelemetryGraphs();
     Lap selectedLoadedLap1;
+    Lap selectedLoadedLap2;
 
     uint8_t predictedLaps = 0;
     LinearRegressionResult predictedFuelRegression;
@@ -116,5 +119,7 @@ private slots:
     void on_btnPredictedLapsMinus1_clicked();
     void on_btnPredictedLapsPlus10_clicked();
     void on_btnPredictedLapsMinus10_clicked();
+    void on_ddSelectLoadedLapNumberTelemetryLap2_currentIndexChanged(int index);
+    void on_actionUDP_Settings_triggered();
 };
 #endif // MAINWINDOW_H

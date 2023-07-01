@@ -33,7 +33,8 @@ SOURCES += \
     qcustomplot.cpp \
     race_recorder.cpp \
     udp_listener.cpp \
-    udp_updater.cpp
+    udp_updater.cpp \
+    udpsettings.cpp
 
 HEADERS += \
     analysis.hpp \
@@ -59,10 +60,12 @@ HEADERS += \
     qcustomplot.h \
     race_recorder.hpp \
     udp_listener.hpp \
-    udp_updater.h
+    udp_updater.h \
+    udpsettings.h
 
 FORMS += \
-    mainwindow.ui
+    mainwindow.ui \
+    udpsettings.ui
 
 RESOURCES += \
     images/tracks/sakhir.jpg \
