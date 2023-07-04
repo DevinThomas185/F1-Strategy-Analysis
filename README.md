@@ -59,6 +59,7 @@ Only some of the track maps have been drawn and added to the software. These are
 
 ## Recently Complete Features
 
+- Add Live Strategy tab
 - IP and Port changable in settings bar
 - Albert Park (Australia) track added
 - Pressures added to damage tab
