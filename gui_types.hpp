@@ -194,5 +194,19 @@ struct PositionalData {
 
 using PositionalDataMap = std::vector<PositionalData>;
 
+struct CurrentCarSetup {
+    uint8_t frontWing;
+    uint8_t differentialOnThrottle;
+    uint8_t brakeBias;
+};
+
+struct DriverAheadAndBehind {
+    std::string driverAhead;
+    std::string driverBehind;
+    std::string driverAheadDelta;
+    std::string driverBehindDelta;
+    TyreData driverAheadTyreData;
+    TyreData driverBehindTyreData;
+};
 
 #endif // GUI_TYPES_HPP

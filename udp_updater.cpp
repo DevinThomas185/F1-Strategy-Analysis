@@ -201,6 +201,21 @@ void UDPUpdater::handleLapPacket(const PacketData& packet){
 
     // INTERVAL CALCULATIONS
 
+    TyreData defaultTyreData = {
+        .actualTyreCompound = ActualTyreCompound::C1,
+        .visualTyreCompound = VisualTyreCompound::SOFT_VISUAL,
+        .tyreAge = 0,
+    };
+
+    DriverAheadAndBehind daab = {
+        .driverAhead = "---",
+        .driverBehind = "---",
+        .driverAheadDelta = "---",
+        .driverBehindDelta = "---",
+        .driverAheadTyreData = defaultTyreData,
+        .driverBehindTyreData = defaultTyreData,
+    };
+
     // Start at 1 (P2) to ignore the leader
     for (size_t pos = 1; pos < rows.size(); pos++) {
         LapData ld = rows[pos]._lapData;
@@ -218,7 +233,23 @@ void UDPUpdater::handleLapPacket(const PacketData& packet){
         uint32_t intervalMS = carTimeAtX > aheadCarTimeAtX ? carTimeAtX - aheadCarTimeAtX : 0;
 
         rows[pos].interval = formatIntervalTime(intervalMS, aheadDriverCurrentLap, ld.currentLapNum);
+
+
+        if (rows[pos]._carIdx == driverSelected && pos >= 1) {
+            daab.driverAhead = rows[pos-1].driver;
+            daab.driverAheadDelta = formatDelta(carTimeAtX, aheadCarTimeAtX);
+            daab.driverAheadTyreData = rows[pos-1].tyreData;
+        }
+
+        if (rows[pos-1]._carIdx == driverSelected && pos-1 < rows.size()) {
+            daab.driverBehind = rows[pos].driver;
+            daab.driverBehindDelta = formatDelta(aheadCarTimeAtX, carTimeAtX); // Reversed to above because we are looking wrt the car ahead AKA driverSelected
+            daab.driverBehindTyreData = rows[pos].tyreData;
+        }
+
     }
+
+    emit DriverAheadAndBehindUpdate(daab);
 
     emit PositionsTableUpdate(rows);
 
@@ -351,6 +382,16 @@ void UDPUpdater::handleCarSetupPacket(const PacketData& packet) {
     for (size_t i = 0; i < participants_.size(); i++) {
         driverCarSetup[i] = setupData.carSetups[i];
     }
+
+    CarSetupData csd = setupData.carSetups[driverSelected];
+
+    CurrentCarSetup ccs = {
+        .frontWing = csd.frontWing,
+        .brakeBias = csd.brakeBias,
+        .differentialOnThrottle = csd.onThrottle,
+    };
+
+    emit CurrentSetupUpdate(ccs);
 }
 
 std::string getRevLights(uint16_t n) {

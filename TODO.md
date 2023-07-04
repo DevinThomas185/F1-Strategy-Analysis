@@ -16,9 +16,13 @@
 - Need a stop button to end a stint early or to change to a new one?
 - Telemetry traces need to be aligned
 - Fuel prediction seems to be far too high (176kg predicted vs 105kg actual for Bahrain)
+- Interval times seem to be a bit dodgy - reporting 0.x00, 0.x01, 0.x02
 
 ## Features
 
+- Add current position to live strategy tab
+- Add current tyres and tyre age to live strategy tab
+- Reorganise the live strategy tab
 - Add lap details to the recorded telemetry tab to see details when overlay included
 - Flags for each marshal zone
 - Put vertical lines for each turn on the graphs

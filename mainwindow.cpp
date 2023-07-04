@@ -60,6 +60,8 @@ MainWindow::MainWindow(QWidget *parent)
     connect(updater, SIGNAL(PositionalDataMapUpdate(PositionalDataMap)), this, SLOT(onPositionalDataMapUpdate(PositionalDataMap)));
     connect(updater, SIGNAL(SessionTypeUpdate(SessionType)), this, SLOT(onSessionTypeUpdate(SessionType)));
     connect(updater, SIGNAL(SafetyCarStatusUpdate(SafetyCarStatus)), this, SLOT(onSafetyCarStatusUpdate(SafetyCarStatus)));
+    connect(updater, SIGNAL(CurrentSetupUpdate(CurrentCarSetup)), this, SLOT(onCurrentSetupUpdate(CurrentCarSetup)));
+    connect(updater, SIGNAL(DriverAheadAndBehindUpdate(DriverAheadAndBehind)), this, SLOT(onDriverAheadAndBehindUpdate(DriverAheadAndBehind)));
     connect(&updater->raceRecorder, SIGNAL(StintStarted(StintType)), this, SLOT(onStintStarted(StintType)));
     connect(&updater->raceRecorder, SIGNAL(StintEnded(StintType)), this, SLOT(onStintEnded(StintType)));
 
@@ -948,8 +950,22 @@ void MainWindow::onSafetyCarStatusUpdate(SafetyCarStatus safetyCarStatus) {
     }
 }
 
+void MainWindow::onCurrentSetupUpdate(CurrentCarSetup currentCarSetup) {
+    ui->lblCurrentFrontWing->setText(QString::number(currentCarSetup.frontWing));
+    ui->lblCurrentBrakeBias->setText(QString::number(currentCarSetup.brakeBias) + "%");
+    ui->lblCurrentDifferential->setText(QString::number(currentCarSetup.differentialOnThrottle) + "%");
+}
 
-
+void MainWindow::onDriverAheadAndBehindUpdate(DriverAheadAndBehind driverAheadAndBehind) {
+    ui->lblDriverAhead->setText(QString::fromStdString(driverAheadAndBehind.driverAhead));
+    ui->lblDriverBehind->setText(QString::fromStdString(driverAheadAndBehind.driverBehind));
+    ui->lblDriverAheadDelta->setText(QString::fromStdString(driverAheadAndBehind.driverAheadDelta));
+    ui->lblDriverBehindDelta->setText(QString::fromStdString(driverAheadAndBehind.driverBehindDelta));
+    ui->lblDriverAheadTyreAge->setText(QString::number(driverAheadAndBehind.driverAheadTyreData.tyreAge));
+    ui->lblDriverAheadTyreAge->setStyleSheet(QString::fromStdString("color : " + getVisualTyreColour(driverAheadAndBehind.driverAheadTyreData.visualTyreCompound).getHexCode()));
+    ui->lblDriverBehindTyreAge->setText(QString::number(driverAheadAndBehind.driverBehindTyreData.tyreAge));
+    ui->lblDriverBehindTyreAge->setStyleSheet(QString::fromStdString("color : " + getVisualTyreColour(driverAheadAndBehind.driverBehindTyreData.visualTyreCompound).getHexCode()));
+}
 
 
 

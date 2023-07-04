@@ -80,6 +80,8 @@ signals:
     void PositionalDataMapUpdate(PositionalDataMap);
     void SessionTypeUpdate(SessionType);
     void SafetyCarStatusUpdate(SafetyCarStatus);
+    void CurrentSetupUpdate(CurrentCarSetup);
+    void DriverAheadAndBehindUpdate(DriverAheadAndBehind);
 
 public slots:
 };

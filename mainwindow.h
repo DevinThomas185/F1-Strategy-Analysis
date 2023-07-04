@@ -93,6 +93,8 @@ public slots:
     void onStintStarted(StintType);
     void onStintEnded(StintType);
     void onSafetyCarStatusUpdate(SafetyCarStatus);
+    void onCurrentSetupUpdate(CurrentCarSetup);
+    void onDriverAheadAndBehindUpdate(DriverAheadAndBehind);
 
 
 private slots:

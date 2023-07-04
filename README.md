@@ -49,6 +49,10 @@ Only some of the track maps have been drawn and added to the software. These are
 
 ![](/demo_images/RecordedTelemetry.png "Recorded Telemetry")
 
+### Live Strategy
+
+![](/demo_images/LiveStrategy.png "Live Strategy")
+
 ## Upcoming Features
 
 [List of upcoming features](TODO.md#features)
