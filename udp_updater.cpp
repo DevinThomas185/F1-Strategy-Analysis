@@ -172,6 +172,25 @@ void UDPUpdater::handleLapPacket(const PacketData& packet){
     const PacketLapData lapData = packet.packet.lapData;
     const uint32_t sessionTime = static_cast<uint32_t>(packet.header.sessionTime * 1000);
 
+    TyreData defaultTyreData = {
+        .actualTyreCompound = ActualTyreCompound::C1,
+        .visualTyreCompound = VisualTyreCompound::SOFT_VISUAL,
+        .tyreAge = 0,
+    };
+
+    LiveStrategyData liveStrategyData = {
+        .driverAhead = "---",
+        .driverBehind = "---",
+        .driverAheadDelta = "---",
+        .driverBehindDelta = "---",
+        .driverAheadTyreData = defaultTyreData,
+        .driverBehindTyreData = defaultTyreData,
+        .driverAheadPosition = "",
+        .driverBehindPosition = "",
+        .lastLap = "0:00.000",
+        .currentPosition = "P1",
+    };
+
     // Send data for positions table
     PositionsTable rows;
     for (size_t i = 0; i < participants_.size(); i++) {
@@ -194,6 +213,9 @@ void UDPUpdater::handleLapPacket(const PacketData& packet){
             .interval = "---", // TEMPORARY
             .tyreData = driverTyreData[i],
         };
+
+        if (i == driverSelected) liveStrategyData.lastLap = formatLapTimeMS(ld.lastLapTimeInMS);
+
         rows.push_back(row);
     }
     std::sort(rows.begin(), rows.end(), comparePositions); // Sorted by positions, now add intervals
@@ -201,20 +223,7 @@ void UDPUpdater::handleLapPacket(const PacketData& packet){
 
     // INTERVAL CALCULATIONS
 
-    TyreData defaultTyreData = {
-        .actualTyreCompound = ActualTyreCompound::C1,
-        .visualTyreCompound = VisualTyreCompound::SOFT_VISUAL,
-        .tyreAge = 0,
-    };
 
-    DriverAheadAndBehind daab = {
-        .driverAhead = "---",
-        .driverBehind = "---",
-        .driverAheadDelta = "---",
-        .driverBehindDelta = "---",
-        .driverAheadTyreData = defaultTyreData,
-        .driverBehindTyreData = defaultTyreData,
-    };
 
     // Start at 1 (P2) to ignore the leader
     for (size_t pos = 1; pos < rows.size(); pos++) {
@@ -235,21 +244,26 @@ void UDPUpdater::handleLapPacket(const PacketData& packet){
         rows[pos].interval = formatIntervalTime(intervalMS, aheadDriverCurrentLap, ld.currentLapNum);
 
 
-        if (rows[pos]._carIdx == driverSelected && pos >= 1) {
-            daab.driverAhead = rows[pos-1].driver;
-            daab.driverAheadDelta = formatDelta(carTimeAtX, aheadCarTimeAtX);
-            daab.driverAheadTyreData = rows[pos-1].tyreData;
+        if (rows[pos]._carIdx == driverSelected) {
+            liveStrategyData.currentPosition = "P" + std::to_string(ld.carPosition);
+            if (pos >= 1) {
+                liveStrategyData.driverAhead = rows[pos-1].driver;
+                liveStrategyData.driverAheadDelta = formatDelta(carTimeAtX, aheadCarTimeAtX);
+                liveStrategyData.driverAheadTyreData = rows[pos-1].tyreData;
+                liveStrategyData.driverAheadPosition = "P" + std::to_string(ld.carPosition-1);
+            }
         }
 
         if (rows[pos-1]._carIdx == driverSelected && pos-1 < rows.size()) {
-            daab.driverBehind = rows[pos].driver;
-            daab.driverBehindDelta = formatDelta(aheadCarTimeAtX, carTimeAtX); // Reversed to above because we are looking wrt the car ahead AKA driverSelected
-            daab.driverBehindTyreData = rows[pos].tyreData;
+            liveStrategyData.driverBehind = rows[pos].driver;
+            liveStrategyData.driverBehindDelta = formatDelta(aheadCarTimeAtX, carTimeAtX); // Reversed to above because we are looking wrt the car ahead AKA driverSelected
+            liveStrategyData.driverBehindTyreData = rows[pos].tyreData;
+            liveStrategyData.driverBehindPosition = "P" + std::to_string(ld.carPosition);
         }
 
     }
 
-    emit DriverAheadAndBehindUpdate(daab);
+    emit DriverAheadAndBehindUpdate(liveStrategyData);
 
     emit PositionsTableUpdate(rows);
 

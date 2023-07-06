@@ -61,7 +61,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(updater, SIGNAL(SessionTypeUpdate(SessionType)), this, SLOT(onSessionTypeUpdate(SessionType)));
     connect(updater, SIGNAL(SafetyCarStatusUpdate(SafetyCarStatus)), this, SLOT(onSafetyCarStatusUpdate(SafetyCarStatus)));
     connect(updater, SIGNAL(CurrentSetupUpdate(CurrentCarSetup)), this, SLOT(onCurrentSetupUpdate(CurrentCarSetup)));
-    connect(updater, SIGNAL(DriverAheadAndBehindUpdate(DriverAheadAndBehind)), this, SLOT(onDriverAheadAndBehindUpdate(DriverAheadAndBehind)));
+    connect(updater, SIGNAL(DriverAheadAndBehindUpdate(LiveStrategyData)), this, SLOT(onDriverAheadAndBehindUpdate(LiveStrategyData)));
     connect(&updater->raceRecorder, SIGNAL(StintStarted(StintType)), this, SLOT(onStintStarted(StintType)));
     connect(&updater->raceRecorder, SIGNAL(StintEnded(StintType)), this, SLOT(onStintEnded(StintType)));
 
@@ -956,15 +956,19 @@ void MainWindow::onCurrentSetupUpdate(CurrentCarSetup currentCarSetup) {
     ui->lblCurrentDifferential->setText(QString::number(currentCarSetup.differentialOnThrottle) + "%");
 }
 
-void MainWindow::onDriverAheadAndBehindUpdate(DriverAheadAndBehind driverAheadAndBehind) {
-    ui->lblDriverAhead->setText(QString::fromStdString(driverAheadAndBehind.driverAhead));
-    ui->lblDriverBehind->setText(QString::fromStdString(driverAheadAndBehind.driverBehind));
-    ui->lblDriverAheadDelta->setText(QString::fromStdString(driverAheadAndBehind.driverAheadDelta));
-    ui->lblDriverBehindDelta->setText(QString::fromStdString(driverAheadAndBehind.driverBehindDelta));
-    ui->lblDriverAheadTyreAge->setText(QString::number(driverAheadAndBehind.driverAheadTyreData.tyreAge));
-    ui->lblDriverAheadTyreAge->setStyleSheet(QString::fromStdString("color : " + getVisualTyreColour(driverAheadAndBehind.driverAheadTyreData.visualTyreCompound).getHexCode()));
-    ui->lblDriverBehindTyreAge->setText(QString::number(driverAheadAndBehind.driverBehindTyreData.tyreAge));
-    ui->lblDriverBehindTyreAge->setStyleSheet(QString::fromStdString("color : " + getVisualTyreColour(driverAheadAndBehind.driverBehindTyreData.visualTyreCompound).getHexCode()));
+void MainWindow::onDriverAheadAndBehindUpdate(LiveStrategyData liveStrategyData) {
+    ui->lblDriverAhead->setText(QString::fromStdString(liveStrategyData.driverAhead));
+    ui->lblDriverBehind->setText(QString::fromStdString(liveStrategyData.driverBehind));
+    ui->lblDriverAheadDelta->setText(QString::fromStdString(liveStrategyData.driverAheadDelta));
+    ui->lblDriverBehindDelta->setText(QString::fromStdString(liveStrategyData.driverBehindDelta));
+    ui->lblDriverAheadTyreAge->setText(QString::number(liveStrategyData.driverAheadTyreData.tyreAge));
+    ui->lblDriverAheadTyreAge->setStyleSheet(QString::fromStdString("color : " + getVisualTyreColour(liveStrategyData.driverAheadTyreData.visualTyreCompound).getHexCode()));
+    ui->lblDriverBehindTyreAge->setText(QString::number(liveStrategyData.driverBehindTyreData.tyreAge));
+    ui->lblDriverBehindTyreAge->setStyleSheet(QString::fromStdString("color : " + getVisualTyreColour(liveStrategyData.driverBehindTyreData.visualTyreCompound).getHexCode()));
+    ui->lblDriverAheadPosition->setText(QString::fromStdString(liveStrategyData.driverAheadPosition));
+    ui->lblDriverBehindPosition->setText(QString::fromStdString(liveStrategyData.driverBehindPosition));
+    ui->lblLastLapTimeStrategy->setText(QString::fromStdString(liveStrategyData.lastLap));
+    ui->lblCurrentPositionStrategy->setText(QString::fromStdString(liveStrategyData.currentPosition));
 }
 
 

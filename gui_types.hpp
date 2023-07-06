@@ -200,13 +200,17 @@ struct CurrentCarSetup {
     uint8_t brakeBias;
 };
 
-struct DriverAheadAndBehind {
+struct LiveStrategyData {
     std::string driverAhead;
     std::string driverBehind;
     std::string driverAheadDelta;
     std::string driverBehindDelta;
     TyreData driverAheadTyreData;
     TyreData driverBehindTyreData;
+    std::string driverAheadPosition;
+    std::string driverBehindPosition;
+    std::string lastLap;
+    std::string currentPosition;
 };
 
 #endif // GUI_TYPES_HPP

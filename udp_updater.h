@@ -81,7 +81,7 @@ signals:
     void SessionTypeUpdate(SessionType);
     void SafetyCarStatusUpdate(SafetyCarStatus);
     void CurrentSetupUpdate(CurrentCarSetup);
-    void DriverAheadAndBehindUpdate(DriverAheadAndBehind);
+    void DriverAheadAndBehindUpdate(LiveStrategyData);
 
 public slots:
 };

@@ -193,7 +193,7 @@
         <x>860</x>
         <y>170</y>
         <width>611</width>
-        <height>81</height>
+        <height>82</height>
        </rect>
       </property>
       <layout class="QGridLayout" name="gridLayout_7">
@@ -295,10 +295,25 @@
         <x>860</x>
         <y>300</y>
         <width>611</width>
-        <height>172</height>
+        <height>176</height>
        </rect>
       </property>
       <layout class="QGridLayout" name="gridLayout_8">
+       <item row="1" column="1">
+        <widget class="QLabel" name="lblDriverAheadDelta">
+         <property name="font">
+          <font>
+           <pointsize>30</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>-0.000</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
        <item row="0" column="1">
         <widget class="QLabel" name="lblDriverAhead">
          <property name="font">
@@ -314,15 +329,30 @@
          </property>
         </widget>
        </item>
-       <item row="2" column="1">
-        <widget class="QLabel" name="lblDriverAheadTyreAge">
+       <item row="3" column="0">
+        <widget class="QLabel" name="lblDriverBehindPosition">
          <property name="font">
           <font>
            <pointsize>30</pointsize>
           </font>
          </property>
          <property name="text">
-          <string>T</string>
+          <string>P0</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="0">
+        <widget class="QLabel" name="lblDriverBehind">
+         <property name="font">
+          <font>
+           <pointsize>30</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>Driver Behind</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignCenter</set>
@@ -344,15 +374,30 @@
          </property>
         </widget>
        </item>
-       <item row="1" column="1">
-        <widget class="QLabel" name="lblDriverAheadDelta">
+       <item row="2" column="1">
+        <widget class="QLabel" name="lblDriverAheadTyreAge">
          <property name="font">
           <font>
            <pointsize>30</pointsize>
           </font>
          </property>
          <property name="text">
-          <string>-0.000</string>
+          <string>T</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1">
+        <widget class="QLabel" name="lblDriverAheadPosition">
+         <property name="font">
+          <font>
+           <pointsize>30</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>P0</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignCenter</set>
@@ -368,21 +413,6 @@
          </property>
          <property name="text">
           <string>+0.000</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignCenter</set>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="0">
-        <widget class="QLabel" name="lblDriverBehind">
-         <property name="font">
-          <font>
-           <pointsize>30</pointsize>
-          </font>
-         </property>
-         <property name="text">
-          <string>Driver Behind</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignCenter</set>
@@ -492,6 +522,27 @@
         </widget>
        </item>
       </layout>
+     </widget>
+     <widget class="QLabel" name="lblCurrentPositionStrategy">
+      <property name="geometry">
+       <rect>
+        <x>860</x>
+        <y>480</y>
+        <width>611</width>
+        <height>36</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>30</pointsize>
+       </font>
+      </property>
+      <property name="text">
+       <string>P0</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
      </widget>
     </widget>
     <widget class="QWidget" name="positionsTab">

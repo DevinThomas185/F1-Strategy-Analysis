@@ -94,7 +94,7 @@ public slots:
     void onStintEnded(StintType);
     void onSafetyCarStatusUpdate(SafetyCarStatus);
     void onCurrentSetupUpdate(CurrentCarSetup);
-    void onDriverAheadAndBehindUpdate(DriverAheadAndBehind);
+    void onDriverAheadAndBehindUpdate(LiveStrategyData);
 
 
 private slots:
