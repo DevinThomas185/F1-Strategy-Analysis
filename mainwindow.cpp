@@ -977,6 +977,9 @@ void MainWindow::onStrategyUpdate(Strategy newStrategy) {
     ui->lblCurrentLapNumberStrategy->setText(QString::fromStdString("L" + std::to_string(newStrategy.currentLapNumber) + " /" + std::to_string(totalLaps)));
     ui->lblTargetLapTimeStrategy->setText(QString::fromStdString(formatLapTimeMS(newStrategy.perLapStrategy[newStrategy.currentLapNumber - 1].targetLapTimeMS)));
 
+    // Delta of last lap to last lap target - must be at least on 2nd lap
+    if (newStrategy.currentLapNumber >= 2) ui->lblDeltaTimeStrategy->setText(QString::fromStdString(formatDelta(newStrategy.perLapStrategy[newStrategy.currentLapNumber - 2].targetLapTimeMS, newStrategy.perLapStrategy[newStrategy.currentLapNumber - 2].actualLapTimeMS)));
+
     // Update next pitstop
     uint8_t nextPitstopLap = newStrategy.nextPitStop();
     LapStrategy pitLapStrategy = newStrategy.perLapStrategy[nextPitstopLap - 1];

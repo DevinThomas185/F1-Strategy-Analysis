@@ -529,7 +529,7 @@
           </font>
          </property>
          <property name="text">
-          <string>Delta</string>
+          <string>Last Delta</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignCenter</set>

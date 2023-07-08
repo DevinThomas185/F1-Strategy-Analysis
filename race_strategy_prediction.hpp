@@ -8,6 +8,7 @@
 
 
 struct LapStrategy {
+    uint32_t actualLapTimeMS;
     uint32_t targetLapTimeMS;
     ActualTyreCompound tyreCompound;
 };
