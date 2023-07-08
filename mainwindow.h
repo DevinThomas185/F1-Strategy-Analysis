@@ -7,7 +7,7 @@
 #include "gui_types.hpp"
 #include "enums.hpp"
 #include "udpsettings.h"
-#include "race_strategy_prediction.h"
+#include "race_strategy_prediction.hpp"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -42,7 +42,6 @@ private:
     QVector<double> gearPlotValues;
     QVector<double> steeringPlotValues;
 
-    uint8_t currentLapNumber = 0;
     float currentLapDistance = 0;
 
     uint32_t targetLapTimeMS = 0;
@@ -72,9 +71,6 @@ private:
     LinearRegressionResult predictedFuelRegression;
     void updateFuelPrediction();
 
-    RaceStrategyPredictor strategyPredictor;
-    Strategy predictedStrategy;
-
 protected:
     void timerEvent(QTimerEvent *event);
 
@@ -101,6 +97,7 @@ public slots:
     void onSafetyCarStatusUpdate(SafetyCarStatus);
     void onCurrentSetupUpdate(CurrentCarSetup);
     void onDriverAheadAndBehindUpdate(LiveStrategyData);
+    void onStrategyUpdate(Strategy);
 
 
 private slots:

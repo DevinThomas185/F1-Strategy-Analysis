@@ -10,6 +10,7 @@
 #include "packet_handler.hpp"
 #include "gui_types.hpp"
 #include "race_recorder.hpp"
+#include "race_strategy_prediction.hpp"
 
 class UDPUpdater : public QThread, public PacketHandlerInterface
 {
@@ -37,6 +38,12 @@ public:
     bool participantsReceived = false;
     uint8_t driverSelected = 0;
     RaceRecorder raceRecorder;
+    RaceStrategyPredictor raceStrategyPredictor;
+    std::vector<PacketHandlerInterface*> packetConsumers = {
+        this,
+        &raceRecorder,
+        &raceStrategyPredictor,
+    };
 
 private:
 

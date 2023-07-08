@@ -64,6 +64,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(updater, SIGNAL(DriverAheadAndBehindUpdate(LiveStrategyData)), this, SLOT(onDriverAheadAndBehindUpdate(LiveStrategyData)));
     connect(&updater->raceRecorder, SIGNAL(StintStarted(StintType)), this, SLOT(onStintStarted(StintType)));
     connect(&updater->raceRecorder, SIGNAL(StintEnded(StintType)), this, SLOT(onStintEnded(StintType)));
+    connect(&updater->raceStrategyPredictor, SIGNAL(StrategyUpdate(Strategy)), this, SLOT(onStrategyUpdate(Strategy)));
 
     // Positions Table
     ui->tblPositionsTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch); // Stretch the columns
@@ -805,7 +806,6 @@ void MainWindow::onTotalLapsUpdate(uint8_t laps) {
 void MainWindow::onWheelLapUpdate(WheelLapData wheelLap) {
     ui->lblCurrentPosition->setText(QString::fromStdString(wheelLap.currentPosition));
     ui->lblCurrentLapTime->setText(QString::fromStdString(wheelLap.currentLapTime));
-    currentLapNumber = wheelLap.currentLapNumber; // TODO: Should move to the near the updateStrategy calls;
     ui->lblCurrentLap->setText("L" + QString::number(wheelLap.currentLapNumber));
 }
 
@@ -971,10 +971,37 @@ void MainWindow::onDriverAheadAndBehindUpdate(LiveStrategyData liveStrategyData)
     ui->lblDriverBehindPosition->setText(QString::fromStdString(liveStrategyData.driverBehindPosition));
     ui->lblLastLapTimeStrategy->setText(QString::fromStdString(liveStrategyData.lastLap));
     ui->lblCurrentPositionStrategy->setText(QString::fromStdString(liveStrategyData.currentPosition));
-    ui->lblCurrentLapNumberStrategy->setText(QString::fromStdString("L" + liveStrategyData.currentLapNumber + " /" + std::to_string(totalLaps)));
+}
+
+void MainWindow::onStrategyUpdate(Strategy newStrategy) {
+    ui->lblCurrentLapNumberStrategy->setText(QString::fromStdString("L" + std::to_string(newStrategy.currentLapNumber) + " /" + std::to_string(totalLaps)));
+    ui->lblTargetLapTimeStrategy->setText(QString::fromStdString(formatLapTimeMS(newStrategy.perLapStrategy[newStrategy.currentLapNumber - 1].targetLapTimeMS)));
+
+    // Update next pitstop
+    uint8_t nextPitstopLap = newStrategy.nextPitStop();
+    LapStrategy pitLapStrategy = newStrategy.perLapStrategy[nextPitstopLap - 1];
+
+    if (nextPitstopLap == 0) {
+        ui->lblNextPitstopTyre->setText("");
+        ui->lblNextPitstopOnLap->setText("No More Pitstops");
+        ui->lblNextPitstopLapsLeft->setText("");
+    } else {
+        ui->lblNextPitstopTyre->setText(QString::fromStdString(getActualTyreName(pitLapStrategy.tyreCompound)));
+        ui->lblNextPitstopOnLap->setText("On Lap " + QString::number(nextPitstopLap));
+
+        // + 1 because we want to include the current lap as a lap to complete
+        uint8_t lapsLeft = nextPitstopLap - newStrategy.currentLapNumber + 1;
+        if (lapsLeft == 1) {
+            ui->lblNextPitstopLapsLeft->setText("This Lap");
+        } else {
+            ui->lblNextPitstopLapsLeft->setText(QString::number(lapsLeft) + " Laps Left");
+        }
+    }
 }
 
 
+
+// UI ELEMENTS CHANGES
 
 void MainWindow::on_ddSelectDriver_currentIndexChanged(int index) {
     if (index >= 0) updater->driverSelected = index;
@@ -1460,13 +1487,6 @@ void MainWindow::on_actionUDP_Settings_triggered()
     udpSettings.show();
 }
 
-
-void MainWindow::on_btnPredictStrategy_clicked()
-{
-    strategyPredictor.predictStrategy(loadedRaceWeekend);
-    predictedStrategy = strategyPredictor.getStrategy();
-
-    ui->lblTargetLapTimeStrategy->setText(QString::fromStdString(formatLapTimeMS(predictedStrategy.perLapStrategy[currentLapNumber - 1].targetLapTimeMS)));
-
+void MainWindow::on_btnPredictStrategy_clicked() {
+    updater->raceStrategyPredictor.predictStrategy(loadedRaceWeekend);
 }
-

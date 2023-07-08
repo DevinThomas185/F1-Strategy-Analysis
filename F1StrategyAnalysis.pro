@@ -60,7 +60,7 @@ HEADERS += \
     packets.hpp \
     qcustomplot.h \
     race_recorder.hpp \
-    race_strategy_prediction.h \
+    race_strategy_prediction.hpp \
     udp_listener.hpp \
     udp_updater.h \
     udpsettings.h

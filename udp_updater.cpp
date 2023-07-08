@@ -26,8 +26,8 @@ void UDPUpdater::run()
         PacketType packetType = getPacketType(packet);
 
         if (packetType == PacketType::PARTICIPANTS) {
-            handleParticipantsPacket(packet);
-            raceRecorder.handleParticipantsPacket(packet);
+            for (auto consumer : packetConsumers)
+                consumer->handleParticipantsPacket(packet);
         }
 
         if (!participantsReceived) continue;
@@ -35,51 +35,51 @@ void UDPUpdater::run()
         switch (packetType)
         {
         case PacketType::MOTION:
-            handleMotionPacket(packet);
-            raceRecorder.handleMotionPacket(packet);
+            for (auto consumer : packetConsumers)
+                consumer->handleMotionPacket(packet);
             break;
         case PacketType::SESSION:
-            handleSessionPacket(packet);
-            raceRecorder.handleSessionPacket(packet);
+            for (auto consumer : packetConsumers)
+                consumer->handleSessionPacket(packet);
             break;
         case PacketType::LAP_DATA:
-            handleLapPacket(packet);
-            raceRecorder.handleLapPacket(packet);
+            for (auto consumer : packetConsumers)
+                consumer->handleLapPacket(packet);
             break;
         case PacketType::EVENT:
-            handleEventPacket(packet);
-            raceRecorder.handleEventPacket(packet);
+            for (auto consumer : packetConsumers)
+                consumer->handleEventPacket(packet);
             break;
         case PacketType::PARTICIPANTS:
             // Handled above
             break;
         case PacketType::CAR_SETUPS:
-            handleCarSetupPacket(packet);
-            raceRecorder.handleCarSetupPacket(packet);
+            for (auto consumer : packetConsumers)
+                consumer->handleCarSetupPacket(packet);
             break;
         case PacketType::CAR_TELEMETRY:
-            handleCarTelemetryPacket(packet);
-            raceRecorder.handleCarTelemetryPacket(packet);
+            for (auto consumer : packetConsumers)
+                consumer->handleCarTelemetryPacket(packet);
             break;
         case PacketType::CAR_STATUS:
-            handleCarStatusPacket(packet);
-            raceRecorder.handleCarStatusPacket(packet);
+            for (auto consumer : packetConsumers)
+                consumer->handleCarStatusPacket(packet);
             break;
         case PacketType::FINAL_CLASSIFICATION:
-            handleFinalClassificationPacket(packet);
-            raceRecorder.handleFinalClassificationPacket(packet);
+            for (auto consumer : packetConsumers)
+                consumer->handleFinalClassificationPacket(packet);
             break;
         case PacketType::LOBBY_INFO:
-            handleLobbyInfoPacket(packet);
-            raceRecorder.handleLobbyInfoPacket(packet);
+            for (auto consumer : packetConsumers)
+                consumer->handleLobbyInfoPacket(packet);
             break;
         case PacketType::CAR_DAMAGE:
-            handleCarDamagePacket(packet);
-            raceRecorder.handleCarDamagePacket(packet);
+            for (auto consumer : packetConsumers)
+                consumer->handleCarDamagePacket(packet);
             break;
         case PacketType::SESSION_HISTORY:
-            handleSessionHistoryPacket(packet);
-            raceRecorder.handleSessionHistoryPacket(packet);
+            for (auto consumer : packetConsumers)
+                consumer->handleSessionHistoryPacket(packet);
             break;
         default:
             break;
