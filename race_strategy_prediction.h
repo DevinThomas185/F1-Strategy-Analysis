@@ -1,6 +1,34 @@
 #include "compiled_protos/RaceWeekend.pb.h"
+#include "enums.hpp"
 
-class RaceStrategyPredictor {
+
+struct LapStrategy {
+    uint32_t targetLapTimeMS;
+    ActualTyreCompound tyreCompound;
+};
+
+struct Strategy
+{
+    std::vector<LapStrategy> perLapStrategy;
+
+    bool isPitLap(int lapNumber) {
+        lapNumber--; // Make 0 indexed
+
+        if (lapNumber == 0) return false;
+
+        return (perLapStrategy[lapNumber - 1].tyreCompound != perLapStrategy[lapNumber].tyreCompound);
+    }
+
+    uint8_t nextPitStop(int currentLap) {
+        for (size_t i = currentLap; i < perLapStrategy.size(); i++) {
+            if (isPitLap(i)) return i;
+        }
+        return 0;
+    }
+};
+
+class RaceStrategyPredictor
+{
 public:
     RaceStrategyPredictor();
     ~RaceStrategyPredictor();
@@ -19,6 +47,14 @@ public:
      */
     void updateStrategy(); // TODO: Define the data that comes into this function
 
-private:
+    /**
+     * @brief Get the current strategy prediction being run
+     * 
+     */
+    Strategy getStrategy() {
+        return currentStrategy;
+    };
 
+private:
+    Strategy currentStrategy;
 };

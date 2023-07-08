@@ -7,6 +7,7 @@
 #include "gui_types.hpp"
 #include "enums.hpp"
 #include "udpsettings.h"
+#include "race_strategy_prediction.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -41,11 +42,13 @@ private:
     QVector<double> gearPlotValues;
     QVector<double> steeringPlotValues;
 
+    uint8_t currentLapNumber = 0;
     float currentLapDistance = 0;
 
     uint32_t targetLapTimeMS = 0;
 
     uint16_t trackLength = 0;
+    uint8_t totalLaps = 0;
     TrackID trackId;
     void setTrackMap();
     double zoomStart = 0;
@@ -68,6 +71,9 @@ private:
     uint8_t predictedLaps = 0;
     LinearRegressionResult predictedFuelRegression;
     void updateFuelPrediction();
+
+    RaceStrategyPredictor strategyPredictor;
+    Strategy predictedStrategy;
 
 protected:
     void timerEvent(QTimerEvent *event);
@@ -123,5 +129,6 @@ private slots:
     void on_btnPredictedLapsMinus10_clicked();
     void on_ddSelectLoadedLapNumberTelemetryLap2_currentIndexChanged(int index);
     void on_actionUDP_Settings_triggered();
+    void on_btnPredictStrategy_clicked();
 };
 #endif // MAINWINDOW_H

@@ -189,6 +189,7 @@ void UDPUpdater::handleLapPacket(const PacketData& packet){
         .driverBehindPosition = "",
         .lastLap = "0:00.000",
         .currentPosition = "P1",
+        .currentLapNumber = "",
     };
 
     // Send data for positions table
@@ -214,7 +215,10 @@ void UDPUpdater::handleLapPacket(const PacketData& packet){
             .tyreData = driverTyreData[i],
         };
 
-        if (i == driverSelected) liveStrategyData.lastLap = formatLapTimeMS(ld.lastLapTimeInMS);
+        if (i == driverSelected) {
+            liveStrategyData.lastLap = formatLapTimeMS(ld.lastLapTimeInMS);
+            liveStrategyData.currentLapNumber = std::to_string(ld.currentLapNum);
+        }
 
         rows.push_back(row);
     }
@@ -272,7 +276,7 @@ void UDPUpdater::handleLapPacket(const PacketData& packet){
     WheelLapData wheelData = {
         .currentPosition = "P" + std::to_string(wld.carPosition),
         .currentLapTime = formatLapTimeMS(wld.currentLapTimeInMS),
-        .currentLapNumber = "L" + std::to_string(wld.currentLapNum),
+        .currentLapNumber = wld.currentLapNum,
     };
 
     emit WheelLapUpdate(wheelData);

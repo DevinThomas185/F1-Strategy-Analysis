@@ -32,6 +32,7 @@ SOURCES += \
     mainwindow.cpp \
     qcustomplot.cpp \
     race_recorder.cpp \
+    race_strategy_prediction.cpp \
     udp_listener.cpp \
     udp_updater.cpp \
     udpsettings.cpp
@@ -59,6 +60,7 @@ HEADERS += \
     packets.hpp \
     qcustomplot.h \
     race_recorder.hpp \
+    race_strategy_prediction.h \
     udp_listener.hpp \
     udp_updater.h \
     udpsettings.h

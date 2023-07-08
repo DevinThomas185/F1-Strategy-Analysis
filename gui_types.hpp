@@ -140,7 +140,7 @@ struct WheelTelemetryData {
 struct WheelLapData {
     std::string currentPosition;
     std::string currentLapTime;
-    std::string currentLapNumber;
+    uint8_t currentLapNumber;
 };
 
 struct WheelStatusData {
@@ -211,6 +211,7 @@ struct LiveStrategyData {
     std::string driverBehindPosition;
     std::string lastLap;
     std::string currentPosition;
+    std::string currentLapNumber;
 };
 
 #endif // GUI_TYPES_HPP

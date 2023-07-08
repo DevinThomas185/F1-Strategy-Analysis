@@ -797,14 +797,16 @@ void MainWindow::onWheelTelemetryUpdate(WheelTelemetryData wheelTelemetry) {
     }
 }
 
-void MainWindow::onTotalLapsUpdate(uint8_t totalLaps) {
-    ui->lblLapTotal->setText("/" + QString::number(totalLaps));
+void MainWindow::onTotalLapsUpdate(uint8_t laps) {
+    totalLaps = laps;
+    ui->lblLapTotal->setText("/" + QString::number(laps));
 }
 
 void MainWindow::onWheelLapUpdate(WheelLapData wheelLap) {
     ui->lblCurrentPosition->setText(QString::fromStdString(wheelLap.currentPosition));
     ui->lblCurrentLapTime->setText(QString::fromStdString(wheelLap.currentLapTime));
-    ui->lblCurrentLap->setText(QString::fromStdString(wheelLap.currentLapNumber));
+    currentLapNumber = wheelLap.currentLapNumber; // TODO: Should move to the near the updateStrategy calls;
+    ui->lblCurrentLap->setText("L" + QString::number(wheelLap.currentLapNumber));
 }
 
 void MainWindow::onWheelStatusUpdate(WheelStatusData wheelStatus) {
@@ -969,6 +971,7 @@ void MainWindow::onDriverAheadAndBehindUpdate(LiveStrategyData liveStrategyData)
     ui->lblDriverBehindPosition->setText(QString::fromStdString(liveStrategyData.driverBehindPosition));
     ui->lblLastLapTimeStrategy->setText(QString::fromStdString(liveStrategyData.lastLap));
     ui->lblCurrentPositionStrategy->setText(QString::fromStdString(liveStrategyData.currentPosition));
+    ui->lblCurrentLapNumberStrategy->setText(QString::fromStdString("L" + liveStrategyData.currentLapNumber + " /" + std::to_string(totalLaps)));
 }
 
 
@@ -1455,5 +1458,15 @@ void MainWindow::updateFuelPrediction() {
 void MainWindow::on_actionUDP_Settings_triggered()
 {
     udpSettings.show();
+}
+
+
+void MainWindow::on_btnPredictStrategy_clicked()
+{
+    strategyPredictor.predictStrategy(loadedRaceWeekend);
+    predictedStrategy = strategyPredictor.getStrategy();
+
+    ui->lblTargetLapTimeStrategy->setText(QString::fromStdString(formatLapTimeMS(predictedStrategy.perLapStrategy[currentLapNumber - 1].targetLapTimeMS)));
+
 }
 
