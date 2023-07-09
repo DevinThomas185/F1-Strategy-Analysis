@@ -211,7 +211,8 @@ struct LiveStrategyData {
     std::string driverBehindPosition;
     std::string lastLap;
     std::string currentPosition;
-    std::string currentLapNumber;
+    float lapDistance;
+    float fuelInTank;
 };
 
 #endif // GUI_TYPES_HPP

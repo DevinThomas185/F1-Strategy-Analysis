@@ -171,7 +171,15 @@ void MainWindow::setupPlots() {
     // Fuel Usage
     ui->pltFuelUsage->addGraph();
     ui->pltFuelUsage->yAxis->setLabel("Fuel (kg)");
-//    ui->pltFuelUsage->yAxis->setRange(0, 110);
+    ui->pltFuelUsage->yAxis->setRange(0, 110);
+
+    // Fuel Usage Strategy
+    ui->pltFuelUsageStrategy->addGraph();
+    ui->pltFuelUsageStrategy->yAxis->setLabel("Fuel (kg)");
+    ui->pltFuelUsageStrategy->xAxis->setLabel("Lap");
+    ui->pltFuelUsageStrategy->yAxis->setRange(0, 110);
+    ui->pltFuelUsageStrategy->addGraph();
+    ui->pltFuelUsageStrategy->graph(1)->setPen(QPen(Qt::red));
 
     // Tyre Degradation
     ui->pltTyreDegradation->addGraph();
@@ -971,14 +979,22 @@ void MainWindow::onDriverAheadAndBehindUpdate(LiveStrategyData liveStrategyData)
     ui->lblDriverBehindPosition->setText(QString::fromStdString(liveStrategyData.driverBehindPosition));
     ui->lblLastLapTimeStrategy->setText(QString::fromStdString(liveStrategyData.lastLap));
     ui->lblCurrentPositionStrategy->setText(QString::fromStdString(liveStrategyData.currentPosition));
+
+
+    fuelUsageStrategyPlotValues.append(liveStrategyData.fuelInTank);
+    lapStrategyPlotValues.append(liveStrategyData.lapDistance / trackLength);
+
+    ui->pltFuelUsageStrategy->graph(1)->setData(lapStrategyPlotValues, fuelUsageStrategyPlotValues);
+    ui->pltFuelUsage->rescaleAxes();
+    ui->pltFuelUsageStrategy->replot();
 }
 
 void MainWindow::onStrategyUpdate(Strategy newStrategy) {
-    ui->lblCurrentLapNumberStrategy->setText(QString::fromStdString("L" + std::to_string(newStrategy.currentLapNumber) + " /" + std::to_string(totalLaps)));
-    ui->lblTargetLapTimeStrategy->setText(QString::fromStdString(formatLapTimeMS(newStrategy.perLapStrategy[newStrategy.currentLapNumber - 1].targetLapTimeMS)));
+    ui->lblCurrentLapNumberStrategy->setText(QString::fromStdString("L" + std::to_string(newStrategy.currentLapNumber) + " /" + std::to_string(newStrategy.totalRacingLaps)));
+    ui->lblTargetLapTimeStrategy->setText(QString::fromStdString(formatLapTimeMS(newStrategy.perLapStrategy[newStrategy.currentLapNumber - 1].predicted.lapTimeMS)));
 
     // Delta of last lap to last lap target - must be at least on 2nd lap
-    if (newStrategy.currentLapNumber >= 2) ui->lblDeltaTimeStrategy->setText(QString::fromStdString(formatDelta(newStrategy.perLapStrategy[newStrategy.currentLapNumber - 2].targetLapTimeMS, newStrategy.perLapStrategy[newStrategy.currentLapNumber - 2].actualLapTimeMS)));
+    if (newStrategy.currentLapNumber >= 2) ui->lblDeltaTimeStrategy->setText(QString::fromStdString(formatDelta(newStrategy.perLapStrategy[newStrategy.currentLapNumber - 2].predicted.lapTimeMS, newStrategy.perLapStrategy[newStrategy.currentLapNumber - 2].actual.lapTimeMS)));
 
     // Update next pitstop
     uint8_t nextPitstopLap = newStrategy.nextPitStop();
@@ -989,7 +1005,7 @@ void MainWindow::onStrategyUpdate(Strategy newStrategy) {
         ui->lblNextPitstopOnLap->setText("No More Pitstops");
         ui->lblNextPitstopLapsLeft->setText("");
     } else {
-        ui->lblNextPitstopTyre->setText(QString::fromStdString(getActualTyreName(pitLapStrategy.tyreCompound)));
+        ui->lblNextPitstopTyre->setText(QString::fromStdString(getActualTyreName(pitLapStrategy.predicted.tyreCompound)));
         ui->lblNextPitstopOnLap->setText("On Lap " + QString::number(nextPitstopLap));
 
         // + 1 because we want to include the current lap as a lap to complete
@@ -1000,6 +1016,20 @@ void MainWindow::onStrategyUpdate(Strategy newStrategy) {
             ui->lblNextPitstopLapsLeft->setText(QString::number(lapsLeft) + " Laps Left");
         }
     }
+
+    // Update fuel usage
+    QVector<double> fuelInTank;
+    QVector<double> laps;
+
+    for (int i = 0; i < newStrategy.perLapStrategy.size(); i++) {
+        fuelInTank.append(newStrategy.perLapStrategy[i].predicted.fuelInTank);
+        laps.append(i);
+    }
+
+    ui->pltFuelUsageStrategy->graph(0)->setData(laps, fuelInTank);
+    ui->pltFuelUsageStrategy->xAxis->setRange(0, newStrategy.perLapStrategy.size());
+    ui->pltFuelUsageStrategy->replot();
+
 }
 
 
@@ -1491,5 +1521,5 @@ void MainWindow::on_actionUDP_Settings_triggered()
 }
 
 void MainWindow::on_btnPredictStrategy_clicked() {
-    updater->raceStrategyPredictor.predictStrategy(loadedRaceWeekend);
+    updater->raceStrategyPredictor.predictStrategy(loadedRaceWeekend, totalLaps);
 }

@@ -37,13 +37,9 @@ public:
 
     bool participantsReceived = false;
     uint8_t driverSelected = 0;
+
     RaceRecorder raceRecorder;
     RaceStrategyPredictor raceStrategyPredictor;
-    std::vector<PacketHandlerInterface*> packetConsumers = {
-        this,
-        &raceRecorder,
-        &raceStrategyPredictor,
-    };
 
 private:
 
@@ -67,6 +63,14 @@ private:
 
     // Map of carIdx -> Car Setup
     std::array<CarSetupData, 22> driverCarSetup;
+
+    std::vector<PacketHandlerInterface*> packetConsumers = {
+        this,
+        &raceRecorder,
+        &raceStrategyPredictor,
+    };
+
+    float lastFuelInTank = 0;
 
 signals:
     void ParticipantsUpdate(Participants);

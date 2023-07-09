@@ -71,6 +71,9 @@ private:
     LinearRegressionResult predictedFuelRegression;
     void updateFuelPrediction();
 
+    QVector<double> fuelUsageStrategyPlotValues;
+    QVector<double> lapStrategyPlotValues;
+
 protected:
     void timerEvent(QTimerEvent *event);
 

@@ -1,5 +1,8 @@
 #include "race_strategy_prediction.hpp"
+#include "analysis.hpp"
 #include "packets.hpp"
+
+#define MINIMUM_FUEL_LEVEL 3
 
 RaceStrategyPredictor::RaceStrategyPredictor(QObject *parent)
     : QObject{parent}
@@ -7,38 +10,112 @@ RaceStrategyPredictor::RaceStrategyPredictor(QObject *parent)
 
 }
 
-void RaceStrategyPredictor::predictStrategy(RaceWeekend raceWeekend) {
-    currentStrategy = {
-        .currentLapNumber = currentLapNumber,
-        .perLapStrategy = {
-            {
-                .actualLapTimeMS = 0,
-                .targetLapTimeMS = 95000,
+void RaceStrategyPredictor::predictStrategy(RaceWeekend raceWeekend, uint8_t raceLaps) {
+    totalRacingLaps = raceLaps;
+
+    // Initialise current strategy;
+    currentStrategy.totalRacingLaps = totalRacingLaps;
+    currentStrategy.currentLapNumber = currentLapNumber;
+    for (int i = 0; i < totalRacingLaps; i++) {
+        currentStrategy.perLapStrategy.push_back({
+            .actual = {
+                .lapTimeMS = 0,
+                .fuelInTank = 0,
                 .tyreCompound = ActualTyreCompound::C1,
             },
-            {
-                .actualLapTimeMS = 0,
-                .targetLapTimeMS = 95100,
+            .predicted = {
+                .lapTimeMS = 0,
+                .fuelInTank = 0,
                 .tyreCompound = ActualTyreCompound::C1,
-            },
-            {
-                .actualLapTimeMS = 0,
-                .targetLapTimeMS = 95200,
-                .tyreCompound = ActualTyreCompound::C2,
-            },
-            {
-                .actualLapTimeMS = 0,
-                .targetLapTimeMS = 95300,
-                .tyreCompound = ActualTyreCompound::C2,
-            },
-            {
-                .actualLapTimeMS = 0,
-                .targetLapTimeMS = 95400,
-                .tyreCompound = ActualTyreCompound::C2,
-            },
+            }
+        });
+    }
+
+
+//    mockPredictStrategy(raceWeekend);
+    simplePredictStrategy(raceWeekend);
+
+    strategyInitialised = true;
+
+    emit StrategyUpdate(currentStrategy);
+}
+
+void RaceStrategyPredictor::mockPredictStrategy(RaceWeekend raceWeekend) {
+    currentStrategy.perLapStrategy[0] = {
+        .actual = {
+            .lapTimeMS = 0,
+            .fuelInTank = 0,
+            .tyreCompound = ActualTyreCompound::C1,
+        },
+        .predicted = {
+            .lapTimeMS = 110000,
+            .fuelInTank = 10,
+            .tyreCompound = ActualTyreCompound::C1,
+        },
+    };
+
+    currentStrategy.perLapStrategy[1] = {
+        .actual = {
+            .lapTimeMS = 0,
+            .fuelInTank = 0,
+            .tyreCompound = ActualTyreCompound::C1,
+        },
+        .predicted = {
+            .lapTimeMS = 97000,
+            .fuelInTank = 9,
+            .tyreCompound = ActualTyreCompound::C2,
         }
     };
-    strategyInitialised = true;
+}
+
+void RaceStrategyPredictor::simplePredictStrategy(RaceWeekend raceWeekend) {
+
+    // Determine degradation and fuel usage for each race simulation stint generated across all practice sessions
+    std::vector<float> predictedFuelRegressions;
+
+    Practice practices[3] = {
+        raceWeekend.race_sessions().fp1(),
+        raceWeekend.race_sessions().fp2(),
+        raceWeekend.race_sessions().fp3(),
+    };
+
+    // For each practice
+    for (auto practice : practices) {
+        // For each race simulation stint
+        for (int i = 0; i < practice.race_simulation_size(); i++) {
+            Stint raceSimulation = practice.race_simulation()[i];
+
+            std::vector<double>fuelUsageValues;
+            std::vector<double>tyreDegradationValues;
+            std::vector<double>lapDistanceValues;
+
+            float l = 0; // l represents the total distance travelled in the stint
+
+            // For each lap in the stint
+            for (Lap lap : raceSimulation.lap()) {
+                // For all telemetry in the lap
+                for (Telemetry t : lap.telemetry()) {
+                    fuelUsageValues.push_back(t.fuel_in_tank());
+                    tyreDegradationValues.push_back(t.rear_left_tyre_damage());
+                    lapDistanceValues.push_back(l + t.lap_distance());
+                }
+                l += raceWeekend.track_length();
+            }
+
+            LinearRegressionResult predictedFuelRegression = calculateLinearRegression(lapDistanceValues, fuelUsageValues);
+            LinearRegressionResult tyreRegression = calculateLinearRegression(lapDistanceValues, tyreDegradationValues);
+
+            // Negate to keep value as amount of fuel used per lap
+            predictedFuelRegressions.push_back(- predictedFuelRegression.gradient * raceWeekend.track_length());
+        }
+    }
+
+    float averageFuelRegression = std::accumulate(predictedFuelRegressions.begin(), predictedFuelRegressions.end(), 0.0) / predictedFuelRegressions.size();
+
+    for (int i = 0; i < totalRacingLaps; i++) {
+        currentStrategy.perLapStrategy[i].predicted.fuelInTank = averageFuelRegression * (totalRacingLaps - i) + MINIMUM_FUEL_LEVEL;
+        currentStrategy.perLapStrategy[i].predicted.lapTimeMS = 100000;
+    }
 }
 
 void RaceStrategyPredictor::updateStrategy() {
@@ -62,7 +139,7 @@ void RaceStrategyPredictor::handleLapPacket(const PacketData &packet) {
     // Change of lap number
     if (ld.currentLapNum != currentLapNumber) {
         if (currentLapNumber > 0) {
-            currentStrategy.perLapStrategy[currentLapNumber - 1].actualLapTimeMS = ld.lastLapTimeInMS;
+            currentStrategy.perLapStrategy[currentLapNumber - 1].actual.lapTimeMS = ld.lastLapTimeInMS;
         }
 
         currentLapNumber = ld.currentLapNum;

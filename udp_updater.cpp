@@ -189,7 +189,8 @@ void UDPUpdater::handleLapPacket(const PacketData& packet){
         .driverBehindPosition = "",
         .lastLap = "0:00.000",
         .currentPosition = "P1",
-        .currentLapNumber = "",
+        .lapDistance = 0,
+        .fuelInTank = 0,
     };
 
     // Send data for positions table
@@ -217,7 +218,8 @@ void UDPUpdater::handleLapPacket(const PacketData& packet){
 
         if (i == driverSelected) {
             liveStrategyData.lastLap = formatLapTimeMS(ld.lastLapTimeInMS);
-            liveStrategyData.currentLapNumber = std::to_string(ld.currentLapNum);
+            liveStrategyData.lapDistance = ld.lapDistance + ((ld.currentLapNum - 1) * trackLength) ;
+            liveStrategyData.fuelInTank = lastFuelInTank;
         }
 
         rows.push_back(row);
@@ -512,6 +514,9 @@ void UDPUpdater::handleCarStatusPacket(const PacketData& packet){
     };
 
     emit WheelStatusUpdate(wheelStatus);
+
+    // For use when sending the LiveStrategyData in the Laps Packet
+    lastFuelInTank = statusData.carStatusData[packet.header.playerCarIndex].fuelInTank;
 }
 
 void UDPUpdater::handleFinalClassificationPacket(const PacketData& packet){}

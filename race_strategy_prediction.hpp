@@ -6,15 +6,22 @@
 #include "enums.hpp"
 #include <QObject>
 
-
-struct LapStrategy {
-    uint32_t actualLapTimeMS;
-    uint32_t targetLapTimeMS;
+struct LapDetails {
+    uint32_t lapTimeMS;
+    float fuelInTank;
     ActualTyreCompound tyreCompound;
+    // Tyre degradation
+};
+
+struct LapStrategy
+{
+    LapDetails actual;
+    LapDetails predicted;
 };
 
 struct Strategy
 {
+    uint8_t totalRacingLaps;
     uint8_t currentLapNumber;
     std::vector<LapStrategy> perLapStrategy;
 
@@ -23,7 +30,7 @@ struct Strategy
 
         if (lapNumber == 0) return false;
 
-        return (perLapStrategy[lapNumber].tyreCompound != perLapStrategy[lapNumber + 1].tyreCompound);
+        return (perLapStrategy[lapNumber].predicted.tyreCompound != perLapStrategy[lapNumber + 1].predicted.tyreCompound);
     }
 
     uint8_t nextPitStop() {
@@ -55,10 +62,15 @@ public:
     /**
      * @brief Predict the initial race strategy using the race weekend data generated
      * during the practice sessions
-     * 
-     * @param[in] raceWeekend The race weekend data loaded from the protobuf file 
+     *
+     * @param[in] raceWeekend The race weekend data loaded from the protobuf file
+     * @param[in] raceLaps  The number of laps to be completed in the race
      */
-    void predictStrategy(RaceWeekend);
+    void predictStrategy(RaceWeekend, uint8_t);
+
+    void mockPredictStrategy(RaceWeekend);
+    void simplePredictStrategy(RaceWeekend);
+
     
     /**
      * @brief Update the current strategy using the live data coming from the game
@@ -75,6 +87,7 @@ public:
     };
 
 private:
+    uint8_t totalRacingLaps = 0;
     bool strategyInitialised = false;
     Strategy currentStrategy;
     uint8_t currentLapNumber;
