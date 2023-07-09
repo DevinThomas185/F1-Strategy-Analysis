@@ -2,6 +2,7 @@
 
 ## Bugs
 
+- Software crashes when clicking Predict Strategy without loading in a race recording
 - Fix to tyre wear in damage tab
 - If listening after already starting the race, using own player in race, the name does not appear in participants packet
 - Tyre degradation and fuel degradation are too frequently recorded (record once per lap or a few times per lap)
@@ -17,16 +18,15 @@
 - Telemetry traces need to be aligned
 - Fuel prediction seems to be far too high (176kg predicted vs 105kg actual for Bahrain)
 - Interval times seem to be a bit dodgy - reporting 0.x00, 0.x01, 0.x02
+- Changing of sessions whilst listening causes the software to crash
 
 ## Features
 
-- Add current position to live strategy tab
 - Add current tyres and tyre age to live strategy tab
 - Reorganise the live strategy tab
 - Add lap details to the recorded telemetry tab to see details when overlay included
 - Flags for each marshal zone
 - Put vertical lines for each turn on the graphs
-- Tyre strategy for entire race
 - Add support for F1 23 packets
 - Add current setup for car
 - Add time delta to the steering wheel
