@@ -22,14 +22,15 @@
 
 ## Features
 
+- Add starting fuel amount to Live Strategy tab (newStrategy.perLapStrategy[0].predicted.fuelInTank = Fuel at first lap)
+- Add tyre strategy in a graphical way to the Live Strategy tab
 - Add current tyres and tyre age to live strategy tab
 - Reorganise the live strategy tab
-- Add lap details to the recorded telemetry tab to see details when overlay included
+- Add lap details to the recorded telemetry tab to see details when overlay included such as lap time and sector times
 - Flags for each marshal zone
 - Put vertical lines for each turn on the graphs
 - Add support for F1 23 packets
 - Add current setup for car
 - Add time delta to the steering wheel
 - Ability to write to already loaded files
-- Race strategy prediction
 - Recording of the race and qualifying sessions

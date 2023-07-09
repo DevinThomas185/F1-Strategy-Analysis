@@ -59,6 +59,8 @@ Only some of the track maps have been drawn and added to the software. These are
 
 ## Recently Complete Features
 
+- Add tyre degradation to Live Strategy tab
+- Add fuel usage graphing to Live Strategy tab
 - Add Live Strategy tab
 - IP and Port changable in settings bar
 - Albert Park (Australia) track added
@@ -66,7 +68,6 @@ Only some of the track maps have been drawn and added to the software. These are
 - Current tyres with tyre age added to positions table
 - Jeddah Corniche Circuit (Saudi Arabia) track added
 - Safety car announcements
-- Race fuel prediction
 
 ### Incomplete Track Maps
 
