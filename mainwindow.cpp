@@ -183,8 +183,16 @@ void MainWindow::setupPlots() {
 
     // Tyre Degradation
     ui->pltTyreDegradation->addGraph();
-    ui->pltTyreDegradation->yAxis->setLabel("Tyre Damage (%)");
-    ui->pltFuelUsage->yAxis->setRange(0, 100);
+    ui->pltTyreDegradation->yAxis->setLabel("Tyre Health (%)");
+    ui->pltTyreDegradation->yAxis->setRange(0, 100);
+
+    // Tyre Degradation Strategy
+    ui->pltTyreStrategy->addGraph();
+    ui->pltTyreStrategy->yAxis->setLabel("Tyre Health (%");
+    ui->pltTyreStrategy->xAxis->setLabel("Lap");
+    ui->pltTyreStrategy->yAxis->setRange(0, 100);
+    ui->pltTyreStrategy->addGraph();
+    ui->pltTyreStrategy->graph(1)->setPen(QPen(Qt::red));
 
     replotTelemetryPlots();
 }
@@ -1017,18 +1025,25 @@ void MainWindow::onStrategyUpdate(Strategy newStrategy) {
         }
     }
 
-    // Update fuel usage
+    // Update fuel usage and tyre degradation strategy
     QVector<double> fuelInTank;
+    QVector<double> tyreDegradation;
     QVector<double> laps;
 
-    for (int i = 0; i < newStrategy.perLapStrategy.size(); i++) {
-        fuelInTank.append(newStrategy.perLapStrategy[i].predicted.fuelInTank);
+    for (size_t i = 0; i < newStrategy.perLapStrategy.size(); i++) {
+        fuelInTank.append(newStrategy.perLapStrategy[i].predicted.fuelInTank);        
+        tyreDegradation.append(newStrategy.perLapStrategy[i].predicted.tyreHealth);
         laps.append(i);
     }
 
     ui->pltFuelUsageStrategy->graph(0)->setData(laps, fuelInTank);
-    ui->pltFuelUsageStrategy->xAxis->setRange(0, newStrategy.perLapStrategy.size());
+    ui->pltFuelUsageStrategy->xAxis->setRange(0, newStrategy.totalRacingLaps);
     ui->pltFuelUsageStrategy->replot();
+
+    ui->pltTyreStrategy->graph(0)->setData(laps, tyreDegradation);
+    ui->pltTyreStrategy->xAxis->setRange(0, newStrategy.totalRacingLaps);
+    ui->pltTyreStrategy->replot();
+
 
 }
 

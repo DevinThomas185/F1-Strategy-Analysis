@@ -11,6 +11,9 @@ RaceStrategyPredictor::RaceStrategyPredictor(QObject *parent)
 }
 
 void RaceStrategyPredictor::predictStrategy(RaceWeekend raceWeekend, uint8_t raceLaps) {
+    // Reset current strategy
+    currentStrategy = {};
+
     totalRacingLaps = raceLaps;
 
     // Initialise current strategy;
@@ -22,11 +25,13 @@ void RaceStrategyPredictor::predictStrategy(RaceWeekend raceWeekend, uint8_t rac
                 .lapTimeMS = 0,
                 .fuelInTank = 0,
                 .tyreCompound = ActualTyreCompound::C1,
+                .tyreHealth = 0,
             },
             .predicted = {
                 .lapTimeMS = 0,
                 .fuelInTank = 0,
                 .tyreCompound = ActualTyreCompound::C1,
+                .tyreHealth = 0,
             }
         });
     }
@@ -46,11 +51,13 @@ void RaceStrategyPredictor::mockPredictStrategy(RaceWeekend raceWeekend) {
             .lapTimeMS = 0,
             .fuelInTank = 0,
             .tyreCompound = ActualTyreCompound::C1,
+            .tyreHealth = 100,
         },
         .predicted = {
             .lapTimeMS = 110000,
             .fuelInTank = 10,
             .tyreCompound = ActualTyreCompound::C1,
+            .tyreHealth = 100,
         },
     };
 
@@ -59,11 +66,13 @@ void RaceStrategyPredictor::mockPredictStrategy(RaceWeekend raceWeekend) {
             .lapTimeMS = 0,
             .fuelInTank = 0,
             .tyreCompound = ActualTyreCompound::C1,
+            .tyreHealth = 97,
         },
         .predicted = {
             .lapTimeMS = 97000,
             .fuelInTank = 9,
             .tyreCompound = ActualTyreCompound::C2,
+            .tyreHealth = 100,
         }
     };
 }
@@ -72,6 +81,7 @@ void RaceStrategyPredictor::simplePredictStrategy(RaceWeekend raceWeekend) {
 
     // Determine degradation and fuel usage for each race simulation stint generated across all practice sessions
     std::vector<float> predictedFuelRegressions;
+    std::map<ActualTyreCompound, std::vector<float>> tyreDegradationRegressions;
 
     Practice practices[3] = {
         raceWeekend.race_sessions().fp1(),
@@ -96,7 +106,7 @@ void RaceStrategyPredictor::simplePredictStrategy(RaceWeekend raceWeekend) {
                 // For all telemetry in the lap
                 for (Telemetry t : lap.telemetry()) {
                     fuelUsageValues.push_back(t.fuel_in_tank());
-                    tyreDegradationValues.push_back(t.rear_left_tyre_damage());
+                    tyreDegradationValues.push_back(t.rear_left_tyre_damage());// TODO: CHANGE TO BE AN AVERAGE OF ALL TYRE'S DEGRADATIONS
                     lapDistanceValues.push_back(l + t.lap_distance());
                 }
                 l += raceWeekend.track_length();
@@ -107,15 +117,37 @@ void RaceStrategyPredictor::simplePredictStrategy(RaceWeekend raceWeekend) {
 
             // Negate to keep value as amount of fuel used per lap
             predictedFuelRegressions.push_back(- predictedFuelRegression.gradient * raceWeekend.track_length());
+            tyreDegradationRegressions[getActualTyreCompound(raceSimulation.setup().actual_tyre_compound())].push_back(tyreRegression.gradient * raceWeekend.track_length());
         }
     }
 
     float averageFuelRegression = std::accumulate(predictedFuelRegressions.begin(), predictedFuelRegressions.end(), 0.0) / predictedFuelRegressions.size();
 
+    int lastPitLap = 0;
+    ActualTyreCompound currentCompound = ActualTyreCompound::C3;
+    std::vector<ActualTyreCompound> usedCompounds = {currentCompound};
+
     for (int i = 0; i < totalRacingLaps; i++) {
+        // Amount of fuel per lap
         currentStrategy.perLapStrategy[i].predicted.fuelInTank = averageFuelRegression * (totalRacingLaps - i) + MINIMUM_FUEL_LEVEL;
         currentStrategy.perLapStrategy[i].predicted.lapTimeMS = 100000;
+
+        float tyreHealth = 100 - (tyreDegradationRegressions[currentCompound][0] * (i - lastPitLap)); //TODO: Should not be from 0, needs to be average
+
+        currentStrategy.perLapStrategy[i].predicted.tyreCompound = currentCompound;
+        currentStrategy.perLapStrategy[i].predicted.tyreHealth = tyreHealth;
+
+        // If less than 40% tyre health, change tyres for next lap
+        if (tyreHealth < 40) {
+            currentCompound = ActualTyreCompound::C3;
+            lastPitLap = i;
+            usedCompounds.push_back(currentCompound);
+        }
+
+
+
     }
+
 }
 
 void RaceStrategyPredictor::updateStrategy() {

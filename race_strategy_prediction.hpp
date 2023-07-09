@@ -10,7 +10,7 @@ struct LapDetails {
     uint32_t lapTimeMS;
     float fuelInTank;
     ActualTyreCompound tyreCompound;
-    // Tyre degradation
+    float tyreHealth;
 };
 
 struct LapStrategy
@@ -28,13 +28,14 @@ struct Strategy
     bool isPitLap(int lapNumber) {
         lapNumber--; // Make 0 indexed
 
-        if (lapNumber == 0) return false;
-
-        return (perLapStrategy[lapNumber].predicted.tyreCompound != perLapStrategy[lapNumber + 1].predicted.tyreCompound);
+        // Lap is a pit lap if the tyre compound changes for the next lap, or the tyre compound is the same, but the health
+        // is higher, meaning a pitstop has occurred.
+        return (perLapStrategy[lapNumber].predicted.tyreCompound != perLapStrategy[lapNumber + 1].predicted.tyreCompound) ||
+               (perLapStrategy[lapNumber].predicted.tyreHealth < perLapStrategy[lapNumber + 1].predicted.tyreHealth);
     }
 
     uint8_t nextPitStop() {
-        for (size_t i = currentLapNumber; i < perLapStrategy.size(); i++) {
+        for (size_t i = currentLapNumber; i <= totalRacingLaps; i++) {
             if (isPitLap(i)) return i;
         }
         return 0;
@@ -90,7 +91,7 @@ private:
     uint8_t totalRacingLaps = 0;
     bool strategyInitialised = false;
     Strategy currentStrategy;
-    uint8_t currentLapNumber;
+    uint8_t currentLapNumber = 1; // TODO: THIS IS NOT GETTING UPDATED ANYWHERE ?!!
 
 signals:
     void StrategyUpdate(Strategy);
