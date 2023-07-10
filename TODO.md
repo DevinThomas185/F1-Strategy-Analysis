@@ -19,6 +19,7 @@
 - Fuel prediction seems to be far too high (176kg predicted vs 105kg actual for Bahrain)
 - Interval times seem to be a bit dodgy - reporting 0.x00, 0.x01, 0.x02
 - Changing of sessions whilst listening causes the software to crash
+- Race simulation randomly split into two stints
 
 ## Features
 
