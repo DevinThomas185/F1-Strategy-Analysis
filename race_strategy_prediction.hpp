@@ -23,6 +23,8 @@ struct Strategy
 {
     uint8_t totalRacingLaps;
     uint8_t currentLapNumber;
+    uint32_t predictedRaceTime;
+    uint32_t predictedRaceTimeUncertainty;
     std::vector<LapStrategy> perLapStrategy;
 
     bool isPitLap(int lapNumber) {

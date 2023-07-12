@@ -2,6 +2,7 @@
 
 ## Bugs
 
+- Strategy prediction for lap time regressions are invalid as some stints may be completed on used tyres and different fuel loads so these must be taken into account
 - Software crashes when clicking Predict Strategy without loading in a race recording
 - Fix to tyre wear in damage tab
 - If listening after already starting the race, using own player in race, the name does not appear in participants packet
@@ -23,6 +24,7 @@
 
 ## Features
 
+- Add session timer for practice and qualifying
 - Add starting fuel amount to Live Strategy tab (newStrategy.perLapStrategy[0].predicted.fuelInTank = Fuel at first lap)
 - Add tyre strategy in a graphical way to the Live Strategy tab
 - Add current tyres and tyre age to live strategy tab

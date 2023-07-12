@@ -3,6 +3,7 @@
 #include "packets.hpp"
 
 #define MINIMUM_FUEL_LEVEL 3
+#define PITSTOP_LAPTIME_INCREASE 20000 // 20,000 MS = 20 Seconds
 
 RaceStrategyPredictor::RaceStrategyPredictor(QObject *parent)
     : QObject{parent}
@@ -168,12 +169,14 @@ void RaceStrategyPredictor::simplePredictStrategy(RaceWeekend raceWeekend) {
     ActualTyreCompound currentCompound;
 
     while (currentLap < totalRacingLaps) {
+        bool isPitLap = false;
 
         // If on first lap or tyres degraded too much, or not used two tyre sets yet
         if (currentLap == 0 || tyreHealth < 40 || (usedCompounds.size() < 2 && currentLap == totalRacingLaps-2)) {
             tyreHealth = 100;
             predictedLapTime = 95000; // TODO: SHOULD NOT BE HARD CODED
 
+            isPitLap = true;
             currentCompound = usedCompounds.contains(currentCompound) ? ActualTyreCompound::C2 : ActualTyreCompound::C3;
             usedCompounds.insert(currentCompound);
         }
@@ -191,10 +194,14 @@ void RaceStrategyPredictor::simplePredictStrategy(RaceWeekend raceWeekend) {
         }
 
         currentStrategy.perLapStrategy[currentLap].predicted.fuelInTank = fuelUsage * (totalRacingLaps - currentLap) + MINIMUM_FUEL_LEVEL ;
-        currentStrategy.perLapStrategy[currentLap].predicted.lapTimeMS = predictedLapTime;
+        currentStrategy.perLapStrategy[currentLap].predicted.lapTimeMS = isPitLap ? predictedLapTime + PITSTOP_LAPTIME_INCREASE : predictedLapTime;
 
         currentStrategy.perLapStrategy[currentLap].predicted.tyreCompound = currentCompound;
         currentStrategy.perLapStrategy[currentLap].predicted.tyreHealth = tyreHealth;
+
+        // Add to the total predicted race time
+        currentStrategy.predictedRaceTime += predictedLapTime;
+        currentStrategy.predictedRaceTimeUncertainty += lapTimeStdDeviations[currentCompound];
 
         tyreHealth -= tyreDegradation;
         predictedLapTime += lapTimeIncrease; // predicted lap times are not correct
