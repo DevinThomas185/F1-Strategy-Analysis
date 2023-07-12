@@ -82,7 +82,8 @@ void RaceStrategyPredictor::simplePredictStrategy(RaceWeekend raceWeekend) {
     // Determine degradation and fuel usage for each race simulation stint generated across all practice sessions
     std::map<ActualTyreCompound, std::vector<float>> fuelRegressions;
     std::map<ActualTyreCompound, std::vector<float>> tyreDegradationRegressions;
-    std::map<ActualTyreCompound, std::vector<uint32_t>> lapTimeRegressions;
+    std::map<ActualTyreCompound, std::vector<double>> lapTimeRegressions;
+    std::map<ActualTyreCompound, std::vector<double>> lapTimesPerTyre;
 
     Practice practices[3] = {
         raceWeekend.race_sessions().fp1(),
@@ -106,8 +107,14 @@ void RaceStrategyPredictor::simplePredictStrategy(RaceWeekend raceWeekend) {
 
             float l = 0; // l represents the total distance travelled in the stint
 
+            ActualTyreCompound tyreCompound = getActualTyreCompound(raceSimulation.setup().actual_tyre_compound());
+
             // For each lap in the stint
             for (Lap lap : raceSimulation.lap()) {
+                // IN LAP has no lap time but lap exists in recording TODO: Remove this?
+                if (lap.lap_time() == 0) continue;
+
+                lapTimesPerTyre[tyreCompound].push_back(lap.lap_time());
                 lapTimeValues.push_back(lap.lap_time());
                 lapNumberValues.push_back(lapNumber++);
                 // For all telemetry in the lap
@@ -123,7 +130,6 @@ void RaceStrategyPredictor::simplePredictStrategy(RaceWeekend raceWeekend) {
             LinearRegressionResult tyreRegression = calculateLinearRegression(lapDistanceValues, tyreDegradationValues);
             LinearRegressionResult lapTimeRegression = calculateLinearRegression(lapNumberValues, lapTimeValues);
 
-            ActualTyreCompound tyreCompound = getActualTyreCompound(raceSimulation.setup().actual_tyre_compound());
 
             // Negate to keep value as amount of fuel used per lap
             fuelRegressions[tyreCompound].push_back(- fuelRegression.gradient * raceWeekend.track_length()); // TODO: Should also be per tyre fuel regressions?
@@ -134,7 +140,8 @@ void RaceStrategyPredictor::simplePredictStrategy(RaceWeekend raceWeekend) {
 
     std::map<ActualTyreCompound, float> averageFuelRegressions;
     std::map<ActualTyreCompound, float> averageTyreDegradationRegressions;
-    std::map<ActualTyreCompound, uint32_t> averageLapTimeRegressions;
+    std::map<ActualTyreCompound, double> averageLapTimeRegressions;
+    std::map<ActualTyreCompound, float> lapTimeStdDeviations;
 
     for (const auto &fr : fuelRegressions) {
         averageFuelRegressions[fr.first] = std::accumulate(fr.second.begin(), fr.second.end(), 0.0) / fr.second.size();
@@ -148,14 +155,9 @@ void RaceStrategyPredictor::simplePredictStrategy(RaceWeekend raceWeekend) {
         averageLapTimeRegressions[ltr.first] = std::accumulate(ltr.second.begin(), ltr.second.end(), 0.0) / ltr.second.size();
     }
 
-    /* Tyre strategy selection process
-     *
-     * Find the number of tyres run in practice sessions
-     *
-     * Select softest compound, run until < 40%
-     * Pit to next softest compound, run until < 40%
-     * If none left, pick hardest and run until end
-     */
+    for (const auto &ltpt : lapTimesPerTyre) {
+        lapTimeStdDeviations[ltpt.first] = standard_deviation(ltpt.second);
+    }
 
     int currentLap = 0;
 

@@ -21,3 +21,15 @@ LinearRegressionResult calculateLinearRegression(const std::vector<double>& x_va
 
     return { gradient, y_intercept };
 }
+
+double standard_deviation(const std::vector<double>& values) {
+    double res = 0;
+    double mean = std::accumulate(values.begin(), values.end(), 0.0) / values.size();
+
+    for (auto v : values) {
+        res += std::pow((v - mean), 2);
+    }
+
+    res /= (values.size() - 1); // /(N - 1) Assume a sample of the lap times instead of population
+    return std::sqrt(res); //
+}

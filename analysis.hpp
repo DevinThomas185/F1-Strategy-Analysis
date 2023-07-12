@@ -13,4 +13,6 @@ struct LinearRegressionResult {
 
 LinearRegressionResult calculateLinearRegression(const std::vector<double>& x_values, const std::vector<double>& y_values);
 
+double standard_deviation(const std::vector<double>& values);
+
 #endif // ANALYSIS_HPP
