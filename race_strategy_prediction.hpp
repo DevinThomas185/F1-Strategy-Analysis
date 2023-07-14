@@ -70,10 +70,6 @@ public:
      * @param[in] raceLaps  The number of laps to be completed in the race
      */
     void predictStrategy(RaceWeekend, uint8_t);
-
-    void mockPredictStrategy(RaceWeekend);
-    void simplePredictStrategy(RaceWeekend);
-
     
     /**
      * @brief Update the current strategy using the live data coming from the game
@@ -90,10 +86,15 @@ public:
     };
 
 private:
+    TrackID track;
     uint8_t totalRacingLaps = 0;
     bool strategyInitialised = false;
     Strategy currentStrategy;
     uint8_t currentLapNumber = 1; // TODO: THIS IS NOT GETTING UPDATED ANYWHERE ?!!
+
+    void mockPredictStrategy(RaceWeekend);
+    void simplePredictStrategy(RaceWeekend);
+    Strategy bruteForceFastestStrategy(Strategy currentStrategy, uint8_t currentLap);
 
 signals:
     void StrategyUpdate(Strategy);

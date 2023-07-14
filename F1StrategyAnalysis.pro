@@ -52,6 +52,7 @@ HEADERS += \
     compiled_protos/SprintRaceSessions2023.pb.h \
     compiled_protos/Stint.pb.h \
     compiled_protos/Telemetry.pb.h \
+    constants.h \
     enums.hpp \
     formatting.hpp \
     gui_types.hpp \
