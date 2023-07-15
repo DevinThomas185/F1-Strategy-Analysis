@@ -10,6 +10,7 @@ struct LapDetails {
     uint32_t lapTimeMS;
     float fuelInTank;
     ActualTyreCompound tyreCompound;
+    VisualTyreCompound visualTyreCompound;
     float tyreHealth;
 };
 
@@ -25,6 +26,8 @@ struct Strategy
     uint8_t currentLapNumber;
     uint32_t predictedRaceTime;
     uint32_t predictedRaceTimeUncertainty;
+    float startingFuelLoad;
+    std::map<ActualTyreCompound, VisualTyreCompound> compoundMapping;
     std::vector<LapStrategy> perLapStrategy;
 
     bool isPitLap(int lapNumber) {

@@ -76,6 +76,9 @@ MainWindow::MainWindow(QWidget *parent)
     // Recorded Lap Table
     ui->tblRecordedLaps->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch); // Stretch the columns
 
+    // Tyre Strategy Table
+    ui->tblTyreStrategy->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch); // Stretch the columns
+
     // Set Stint Types
     for (auto stintType: stintTypes) {
         QString s = QString::fromStdString(getStintTypeString(stintType));
@@ -468,7 +471,7 @@ void MainWindow::onPositionsTableUpdate(PositionsTable positionsTable)
         PositionsTableRow row = positionsTable[r];
 
         QTableWidgetItem *position = new QTableWidgetItem(QString::fromStdString(row.position));
-        position->setFlags(position->flags() &  ~Qt::ItemIsEditable);
+        position->setFlags(position->flags() & ~Qt::ItemIsEditable);
         position->setTextAlignment(Qt::AlignCenter);
         position->setFont(font);
 
@@ -479,7 +482,7 @@ void MainWindow::onPositionsTableUpdate(PositionsTable positionsTable)
         ui->tblPositionsTable->setItem(r, 0, position);
 
         QTableWidgetItem *driver = new QTableWidgetItem(QString::fromStdString(row.driver));
-        driver->setFlags(driver->flags() &  ~Qt::ItemIsEditable);
+        driver->setFlags(driver->flags() & ~Qt::ItemIsEditable);
         driver->setFont(font);
 
         if (playerCarIdx == row._carIdx) driver->setForeground(QBrush(QColor("#6ec0fa")));
@@ -491,7 +494,7 @@ void MainWindow::onPositionsTableUpdate(PositionsTable positionsTable)
                          row.positionChange == 0 ? "0" : std::to_string(row.positionChange);
 
         QTableWidgetItem *positionChange = new QTableWidgetItem(QString::fromStdString(pc));
-        positionChange->setFlags(positionChange->flags() &  ~Qt::ItemIsEditable);
+        positionChange->setFlags(positionChange->flags() & ~Qt::ItemIsEditable);
         positionChange->setTextAlignment(Qt::AlignCenter);
         positionChange->setFont(font);
         if (row.positionChange > 0) positionChange->setForeground(QBrush(QColor("#06b800"))); // Gained positions
@@ -499,27 +502,27 @@ void MainWindow::onPositionsTableUpdate(PositionsTable positionsTable)
         ui->tblPositionsTable->setItem(r, 2, positionChange);
 
         QTableWidgetItem *sector1 = new QTableWidgetItem(QString::fromStdString(row.sector1));
-        sector1->setFlags(sector1->flags() &  ~Qt::ItemIsEditable);
+        sector1->setFlags(sector1->flags() & ~Qt::ItemIsEditable);
         sector1->setFont(font);
         ui->tblPositionsTable->setItem(r, 3, sector1);
 
         QTableWidgetItem *sector2 = new QTableWidgetItem(QString::fromStdString(row.sector2));
-        sector2->setFlags(sector2->flags() &  ~Qt::ItemIsEditable);
+        sector2->setFlags(sector2->flags() & ~Qt::ItemIsEditable);
         sector2->setFont(font);
         ui->tblPositionsTable->setItem(r, 4, sector2);
 
         QTableWidgetItem *lastLap = new QTableWidgetItem(QString::fromStdString(row.lastlap));
-        lastLap->setFlags(lastLap->flags() &  ~Qt::ItemIsEditable);
+        lastLap->setFlags(lastLap->flags() & ~Qt::ItemIsEditable);
         lastLap->setFont(font);
         ui->tblPositionsTable->setItem(r, 5, lastLap);
 
         QTableWidgetItem *interval = new QTableWidgetItem(QString::fromStdString(row.interval));
-        interval->setFlags(interval->flags() &  ~Qt::ItemIsEditable);
+        interval->setFlags(interval->flags() & ~Qt::ItemIsEditable);
         interval->setFont(font);
         ui->tblPositionsTable->setItem(r, 6, interval);
 
         QTableWidgetItem *tyreAge = new QTableWidgetItem(QString::number(row.tyreData.tyreAge));
-        tyreAge->setFlags(tyreAge->flags() &  ~Qt::ItemIsEditable);
+        tyreAge->setFlags(tyreAge->flags() & ~Qt::ItemIsEditable);
         tyreAge->setTextAlignment(Qt::AlignCenter);
         tyreAge->setFont(font);
         tyreAge->setForeground(QBrush(QColor(QString::fromStdString(getVisualTyreColour(row.tyreData.visualTyreCompound).getHexCode()))));
@@ -883,7 +886,7 @@ void MainWindow::onLapHistoryTableUpdate(LapHistoryTable lapHistoryTable) {
         LapHistoryRow row = lapHistoryTable.table[r];
 
         QTableWidgetItem *lap = new QTableWidgetItem(QString::number(row.lap));
-        lap->setFlags(lap->flags() &  ~Qt::ItemIsEditable);
+        lap->setFlags(lap->flags() & ~Qt::ItemIsEditable);
         lap->setTextAlignment(Qt::AlignCenter);
         lap->setFont(font);
         if (!row.lapValid) lap->setBackground(invalid);
@@ -891,35 +894,35 @@ void MainWindow::onLapHistoryTableUpdate(LapHistoryTable lapHistoryTable) {
         ui->tblLapHistory->setItem(r, 0, lap);
 
         QTableWidgetItem *sector1 = new QTableWidgetItem(QString::fromStdString(row.sector1));
-        sector1->setFlags(sector1->flags() &  ~Qt::ItemIsEditable);
+        sector1->setFlags(sector1->flags() & ~Qt::ItemIsEditable);
         sector1->setFont(font);
         if (!row.sector1Valid) sector1->setBackground(invalid);
         if (lapHistoryTable.bestSector1Lap == row.lap) sector1->setForeground(fastest);
         ui->tblLapHistory->setItem(r, 1, sector1);
 
         QTableWidgetItem *sector2 = new QTableWidgetItem(QString::fromStdString(row.sector2));
-        sector2->setFlags(sector2->flags() &  ~Qt::ItemIsEditable);
+        sector2->setFlags(sector2->flags() & ~Qt::ItemIsEditable);
         sector2->setFont(font);
         if (!row.sector2Valid) sector2->setBackground(invalid);
         if (lapHistoryTable.bestSector2Lap == row.lap) sector2->setForeground(fastest);
         ui->tblLapHistory->setItem(r, 2, sector2);
 
         QTableWidgetItem *sector3 = new QTableWidgetItem(QString::fromStdString(row.sector3));
-        sector3->setFlags(sector3->flags() &  ~Qt::ItemIsEditable);
+        sector3->setFlags(sector3->flags() & ~Qt::ItemIsEditable);
         sector3->setFont(font);
         if (!row.sector3Valid) sector3->setBackground(invalid);
         if (lapHistoryTable.bestSector3Lap == row.lap) sector3->setForeground(fastest);
         ui->tblLapHistory->setItem(r, 3, sector3);
 
         QTableWidgetItem *lapTime = new QTableWidgetItem(QString::fromStdString(row.lapTime));
-        lapTime->setFlags(lapTime->flags() &  ~Qt::ItemIsEditable);
+        lapTime->setFlags(lapTime->flags() & ~Qt::ItemIsEditable);
         lapTime->setFont(font);
         if (!row.lapValid) lapTime->setBackground(invalid);
         if (lapHistoryTable.bestLapTimeLap == row.lap) lapTime->setForeground(fastest);
         ui->tblLapHistory->setItem(r, 4, lapTime);
 
         QTableWidgetItem *tyre = new QTableWidgetItem(QString::fromStdString(row.tyre));
-        tyre->setFlags(tyre->flags() &  ~Qt::ItemIsEditable);
+        tyre->setFlags(tyre->flags() & ~Qt::ItemIsEditable);
         tyre->setTextAlignment(Qt::AlignCenter);
         tyre->setFont(font);
         tyre->setForeground(QBrush(QColor(QString::fromStdString(row.tyreColour.getHexCode()))));
@@ -927,7 +930,7 @@ void MainWindow::onLapHistoryTableUpdate(LapHistoryTable lapHistoryTable) {
 
 
         QTableWidgetItem *targetDelta = new QTableWidgetItem(QString::fromStdString(formatDelta(targetLapTimeMS, row._lapTimeMS)));
-        targetDelta->setFlags(targetDelta->flags() &  ~Qt::ItemIsEditable);
+        targetDelta->setFlags(targetDelta->flags() & ~Qt::ItemIsEditable);
         targetDelta->setFont(font);
         if (row._lapTimeMS < targetLapTimeMS) targetDelta->setForeground(QBrush(QColor("green")));
         if (row._lapTimeMS > targetLapTimeMS) targetDelta->setForeground(QBrush(QColor("red")));
@@ -1008,6 +1011,9 @@ void MainWindow::onStrategyUpdate(Strategy newStrategy) {
     ui->lblPredictedRaceTime->setText(QString::fromStdString(formatLapTimeMS(newStrategy.predictedRaceTime)));
     ui->lblPredictedRaceTimeUncertainty->setText("±" + QString::fromStdString(formatSectorMS(newStrategy.predictedRaceTimeUncertainty)));
 
+    // Starting Fuel Load
+    ui->lblStartingFuelLoad->setText(QString::number(newStrategy.startingFuelLoad) + " kg");
+
     // Update next pitstop
     uint8_t nextPitstopLap = newStrategy.nextPitStop();
     LapStrategy pitLapStrategy = newStrategy.perLapStrategy[nextPitstopLap - 1];
@@ -1018,6 +1024,7 @@ void MainWindow::onStrategyUpdate(Strategy newStrategy) {
         ui->lblNextPitstopLapsLeft->setText("");
     } else {
         ui->lblNextPitstopTyre->setText(QString::fromStdString(getActualTyreName(pitLapStrategy.predicted.tyreCompound)));
+        ui->lblNextPitstopTyre->setStyleSheet(QString::fromStdString("color: " + getVisualTyreColour(newStrategy.compoundMapping[pitLapStrategy.predicted.tyreCompound]).getHexCode()));
         ui->lblNextPitstopOnLap->setText("On Lap " + QString::number(nextPitstopLap));
 
         // + 1 because we want to include the current lap as a lap to complete
@@ -1047,6 +1054,39 @@ void MainWindow::onStrategyUpdate(Strategy newStrategy) {
     ui->pltTyreStrategy->graph(0)->setData(laps, tyreDegradation);
     ui->pltTyreStrategy->xAxis->setRange(0, newStrategy.totalRacingLaps);
     ui->pltTyreStrategy->replot();
+
+    std::map<uint8_t, ActualTyreCompound> pitStops;
+    for (uint8_t i = 0; i < newStrategy.totalRacingLaps; i++) {
+        if (newStrategy.isPitLap(i)) {
+            pitStops[i] = newStrategy.perLapStrategy[i].predicted.tyreCompound;
+        }
+    }
+
+    // Tyre Strategy table
+    while (ui->tblTyreStrategy->rowCount() < pitStops.size()) {
+        ui->tblTyreStrategy->insertRow(0);
+    }
+
+    int r = 0;
+    QFont font = QFont();
+    font.setPointSize(18);
+    for (auto pit : pitStops) {
+        QTableWidgetItem *lap = new QTableWidgetItem(QString::number(pit.first));
+        lap->setFlags(lap->flags() & ~Qt::ItemIsEditable);
+        lap->setTextAlignment(Qt::AlignCenter);
+        lap->setFont(font);
+        ui->tblTyreStrategy->setItem(r, 0, lap);
+
+        QTableWidgetItem *tyre = new QTableWidgetItem(QString::fromStdString(getActualTyreName(pit.second)));
+        tyre->setFlags(tyre->flags() & ~Qt::ItemIsEditable);
+        tyre->setTextAlignment(Qt::AlignCenter);
+        tyre->setFont(font);
+        VisualTyreCompound vtc = newStrategy.compoundMapping[pit.second];
+        tyre->setForeground(QBrush(QColor(QString::fromStdString(getVisualTyreColour(vtc).getHexCode()))));
+        ui->tblTyreStrategy->setItem(r, 1, tyre);
+
+        r++;
+    }
 
 
 }
@@ -1196,31 +1236,31 @@ void MainWindow::updateLoadedRaceWeekendData() {
         if (lap.lap_time() == 0) continue;
 
         QTableWidgetItem *lapNumber = new QTableWidgetItem(QString::number(i+1));
-        lapNumber->setFlags(lapNumber->flags() &  ~Qt::ItemIsEditable);
+        lapNumber->setFlags(lapNumber->flags() & ~Qt::ItemIsEditable);
         lapNumber->setTextAlignment(Qt::AlignCenter);
         lapNumber->setFont(font);
         ui->tblRecordedLaps->setItem(i, 0, lapNumber);
 
         QTableWidgetItem *sector1 = new QTableWidgetItem(QString::fromStdString(formatSectorMS(lap.sector_1())));
-        sector1->setFlags(sector1->flags() &  ~Qt::ItemIsEditable);
+        sector1->setFlags(sector1->flags() & ~Qt::ItemIsEditable);
         sector1->setTextAlignment(Qt::AlignCenter);
         sector1->setFont(font);
         ui->tblRecordedLaps->setItem(i, 1, sector1);
 
         QTableWidgetItem *sector2 = new QTableWidgetItem(QString::fromStdString(formatSectorMS(lap.sector_2())));
-        sector2->setFlags(sector2->flags() &  ~Qt::ItemIsEditable);
+        sector2->setFlags(sector2->flags() & ~Qt::ItemIsEditable);
         sector2->setTextAlignment(Qt::AlignCenter);
         sector2->setFont(font);
         ui->tblRecordedLaps->setItem(i, 2, sector2);
 
         QTableWidgetItem *sector3 = new QTableWidgetItem(QString::fromStdString(formatSectorMS(lap.sector_3())));
-        sector3->setFlags(sector3->flags() &  ~Qt::ItemIsEditable);
+        sector3->setFlags(sector3->flags() & ~Qt::ItemIsEditable);
         sector3->setTextAlignment(Qt::AlignCenter);
         sector3->setFont(font);
         ui->tblRecordedLaps->setItem(i, 3, sector3);
 
         QTableWidgetItem *lapTime = new QTableWidgetItem(QString::fromStdString(formatLapTimeMS(lap.lap_time())));
-        lapTime->setFlags(lapTime->flags() &  ~Qt::ItemIsEditable);
+        lapTime->setFlags(lapTime->flags() & ~Qt::ItemIsEditable);
         lapTime->setTextAlignment(Qt::AlignCenter);
         lapTime->setFont(font);
         ui->tblRecordedLaps->setItem(i, 4, lapTime);
@@ -1540,5 +1580,5 @@ void MainWindow::on_actionUDP_Settings_triggered()
 }
 
 void MainWindow::on_btnPredictStrategy_clicked() {
-    updater->raceStrategyPredictor.predictStrategy(loadedRaceWeekend, totalLaps);
+    updater->raceStrategyPredictor.predictStrategy(loadedRaceWeekend, ui->sbTotalRacingLaps->value());
 }

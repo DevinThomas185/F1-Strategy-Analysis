@@ -33,3 +33,30 @@ double standard_deviation(const std::vector<double>& values) {
     res /= (values.size() - 1); // /(N - 1) Assume a sample of the lap times instead of population
     return std::sqrt(res); //
 }
+
+std::map<ActualTyreCompound, VisualTyreCompound> determineCompoundMapping(ActualTyreCompound actual, VisualTyreCompound visual) {
+    std::map<ActualTyreCompound, VisualTyreCompound> map1 = {
+        {ActualTyreCompound::C1, VisualTyreCompound::HARD_VISUAL},
+        {ActualTyreCompound::C2, VisualTyreCompound::MEDIUM_VISUAL},
+        {ActualTyreCompound::C3, VisualTyreCompound::SOFT_VISUAL},
+    };
+
+    std::map<ActualTyreCompound, VisualTyreCompound> map2 = {
+        {ActualTyreCompound::C2, VisualTyreCompound::HARD_VISUAL},
+        {ActualTyreCompound::C3, VisualTyreCompound::MEDIUM_VISUAL},
+        {ActualTyreCompound::C4, VisualTyreCompound::SOFT_VISUAL},
+     };
+
+    std::map<ActualTyreCompound, VisualTyreCompound> map3 = {
+        {ActualTyreCompound::C3, VisualTyreCompound::HARD_VISUAL},
+        {ActualTyreCompound::C4, VisualTyreCompound::MEDIUM_VISUAL},
+        {ActualTyreCompound::C5, VisualTyreCompound::SOFT_VISUAL},
+    };
+
+    if (map1[actual] == visual) return map1;
+    if (map2[actual] == visual) return map2;
+    if (map3[actual] == visual) return map3;
+
+    return map1; // Should not reach here
+}
+

@@ -77,6 +77,18 @@ void RaceStrategyPredictor::mockPredictStrategy(RaceWeekend raceWeekend) {
     };
 }
 
+ActualTyreCompound pickCompound(std::set<ActualTyreCompound> usedCompounds) {
+    if (!usedCompounds.contains(ActualTyreCompound::C1)) return ActualTyreCompound::C1;
+    if (!usedCompounds.contains(ActualTyreCompound::C2)) return ActualTyreCompound::C2;
+    if (!usedCompounds.contains(ActualTyreCompound::C3)) return ActualTyreCompound::C3;
+    if (!usedCompounds.contains(ActualTyreCompound::C4)) return ActualTyreCompound::C4;
+    if (!usedCompounds.contains(ActualTyreCompound::C5)) return ActualTyreCompound::C5;
+    if (!usedCompounds.contains(ActualTyreCompound::INTER)) return ActualTyreCompound::INTER;
+    if (!usedCompounds.contains(ActualTyreCompound::WET)) return ActualTyreCompound::WET;
+
+    return ActualTyreCompound::C3;
+}
+
 void RaceStrategyPredictor::simplePredictStrategy(RaceWeekend raceWeekend) {
 
     // Determine degradation and fuel usage for each race simulation stint generated across all practice sessions
@@ -84,6 +96,8 @@ void RaceStrategyPredictor::simplePredictStrategy(RaceWeekend raceWeekend) {
     std::map<ActualTyreCompound, std::vector<float>> tyreDegradationRegressions;
     std::map<ActualTyreCompound, std::vector<double>> lapTimeRegressions;
     std::map<ActualTyreCompound, std::vector<double>> lapTimesPerTyre;
+
+    std::optional<std::map<ActualTyreCompound, VisualTyreCompound>> compoundMapping;
 
     Practice practices[3] = {
         raceWeekend.race_sessions().fp1(),
@@ -108,6 +122,9 @@ void RaceStrategyPredictor::simplePredictStrategy(RaceWeekend raceWeekend) {
             float l = 0; // l represents the total distance travelled in the stint
 
             ActualTyreCompound tyreCompound = getActualTyreCompound(raceSimulation.setup().actual_tyre_compound());
+            VisualTyreCompound visualCompound = getVisualTyreCompound(raceSimulation.setup().visual_tyre_compound());
+
+            if (!compoundMapping.has_value()) compoundMapping = determineCompoundMapping(tyreCompound, visualCompound);
 
             // For each lap in the stint
             for (Lap lap : raceSimulation.lap()) {
@@ -117,6 +134,7 @@ void RaceStrategyPredictor::simplePredictStrategy(RaceWeekend raceWeekend) {
                 lapTimesPerTyre[tyreCompound].push_back(lap.lap_time());
                 lapTimeValues.push_back(lap.lap_time());
                 lapNumberValues.push_back(lapNumber++);
+
                 // For all telemetry in the lap
                 for (Telemetry t : lap.telemetry()) {
                     fuelUsageValues.push_back(t.fuel_in_tank());
@@ -163,103 +181,63 @@ void RaceStrategyPredictor::simplePredictStrategy(RaceWeekend raceWeekend) {
     int currentLap = 0;
 
     float tyreHealth = 100;
+    float totalFuelLeft = 110; // Maximum amount of fuel that can go in the car
     uint32_t predictedLapTime = StrategyConstants::averageLapTimeDefaults.at(getTrackID(raceWeekend.track_id()));
 
     std::set<ActualTyreCompound> usedCompounds; // TODO: Should this be a set?
     ActualTyreCompound currentCompound;
 
+    while (currentLap < totalRacingLaps) {
+        bool isPitLap = false;
 
-    currentStrategy = bruteForceFastestStrategy(currentStrategy, 0);
+        // If on first lap or tyres degraded too much, or not used two tyre sets yet
+        if (currentLap == 0 || tyreHealth < 50 || (usedCompounds.size() < 2 && currentLap == totalRacingLaps-2)) {
+            isPitLap = true;
+            currentCompound = pickCompound(usedCompounds);
+            usedCompounds.insert(currentCompound);
+            tyreHealth = 100;
 
+            predictedLapTime = StrategyConstants::averageLapTimeDefaults.at(getTrackID(raceWeekend.track_id())) + StrategyConstants::tyreDefaults.at(currentCompound).averageLapTimeDelta;
+        }
 
-//    while (currentLap < totalRacingLaps) {
-//        bool isPitLap = false;
+        // Default values if tyre wasn't tested with
+        float fuelUsage = StrategyConstants::tyreDefaults.at(currentCompound).fuelUsage;
+        float tyreDegradation = StrategyConstants::tyreDefaults.at(currentCompound).tyreDegradation;
+        uint32_t lapTimeIncrease = StrategyConstants::tyreDefaults.at(currentCompound).lapTimeIncrease;
 
-//        // If on first lap or tyres degraded too much, or not used two tyre sets yet
-//        if (currentLap == 0 || tyreHealth < 40 || (usedCompounds.size() < 2 && currentLap == totalRacingLaps-2)) {
-//            isPitLap = true;
-//            currentCompound = usedCompounds.contains(currentCompound) ? ActualTyreCompound::C2 : ActualTyreCompound::C3;
-//            usedCompounds.insert(currentCompound);
-//            tyreHealth = 100;
+        // TODO: when putting all three into one map, change this (currently, all should contain the same tyre compounds)
+        if (averageFuelRegressions.contains(currentCompound)) {
+            fuelUsage = averageFuelRegressions[currentCompound];
+            tyreDegradation = averageTyreDegradationRegressions[currentCompound];
+            lapTimeIncrease = averageLapTimeRegressions[currentCompound];
+        }
 
-//            predictedLapTime = StrategyConstants::averageLapTimeDefaults.at(getTrackID(raceWeekend.track_id())) + StrategyConstants::tyreDefaults.at(currentCompound).averageLapTimeDelta;
-//        }
+        currentStrategy.perLapStrategy[currentLap].predicted.fuelInTank = totalFuelLeft;
+        currentStrategy.perLapStrategy[currentLap].predicted.lapTimeMS = isPitLap ? predictedLapTime + StrategyConstants::PITSTOP_LAPTIME_INCREASE : predictedLapTime;
 
-//        // Default values if tyre wasn't tested with
-//        float fuelUsage = StrategyConstants::tyreDefaults.at(currentCompound).fuelUsage;
-//        float tyreDegradation = StrategyConstants::tyreDefaults.at(currentCompound).tyreDegradation;
-//        uint32_t lapTimeIncrease = StrategyConstants::tyreDefaults.at(currentCompound).lapTimeIncrease;
+        currentStrategy.perLapStrategy[currentLap].predicted.tyreCompound = currentCompound;
+        currentStrategy.perLapStrategy[currentLap].predicted.tyreHealth = tyreHealth;
 
-//        // TODO: when putting all three into one map, change this (currently, all should contain the same tyre compounds)
-//        if (averageFuelRegressions.contains(currentCompound)) {
-//            fuelUsage = averageFuelRegressions[currentCompound];
-//            tyreDegradation = averageTyreDegradationRegressions[currentCompound];
-//            lapTimeIncrease = averageLapTimeRegressions[currentCompound];
-//        }
+        // Add to the total predicted race time
+        currentStrategy.predictedRaceTime += predictedLapTime;
+        currentStrategy.predictedRaceTimeUncertainty += lapTimeStdDeviations[currentCompound];
 
-//        currentStrategy.perLapStrategy[currentLap].predicted.fuelInTank = fuelUsage * (totalRacingLaps - currentLap) + StrategyConstants::MINIMUM_FUEL_LEVEL;
-//        currentStrategy.perLapStrategy[currentLap].predicted.lapTimeMS = isPitLap ? predictedLapTime + StrategyConstants::PITSTOP_LAPTIME_INCREASE : predictedLapTime;
+        tyreHealth -= tyreDegradation;
+        predictedLapTime += lapTimeIncrease; // predicted lap times are not correct
+        totalFuelLeft -= fuelUsage;
 
-//        currentStrategy.perLapStrategy[currentLap].predicted.tyreCompound = currentCompound;
-//        currentStrategy.perLapStrategy[currentLap].predicted.tyreHealth = tyreHealth;
-
-//        // Add to the total predicted race time
-//        currentStrategy.predictedRaceTime += predictedLapTime;
-//        currentStrategy.predictedRaceTimeUncertainty += lapTimeStdDeviations[currentCompound];
-
-//        tyreHealth -= tyreDegradation;
-//        predictedLapTime += lapTimeIncrease; // predicted lap times are not correct
-
-//        currentLap++;
-//    }
-}
-
-bool compareStrategies(Strategy a, Strategy b) {
-    return a.predictedRaceTime < b.predictedRaceTime;
-}
-
-Strategy pitToTyre(ActualTyreCompound newTyre, uint8_t currentLap, Strategy strategy, TrackID track) {
-    strategy.perLapStrategy[currentLap].predicted.tyreCompound = newTyre;
-    strategy.perLapStrategy[currentLap].predicted.tyreHealth = 100;
-    strategy.perLapStrategy[currentLap].predicted.fuelInTank = strategy.perLapStrategy[currentLap-1].predicted.fuelInTank - StrategyConstants::tyreDefaults.at(newTyre).fuelUsage;;
-    strategy.perLapStrategy[currentLap].predicted.lapTimeMS = StrategyConstants::averageLapTimeDefaults.at(track) + StrategyConstants::tyreDefaults.at(newTyre).averageLapTimeDelta + StrategyConstants::PITSTOP_LAPTIME_INCREASE;
-    strategy.predictedRaceTime += strategy.perLapStrategy[currentLap].predicted.lapTimeMS;
-    return strategy;
-}
-
-Strategy noPitStop(uint8_t currentLap, Strategy strategy) {
-    ActualTyreCompound currentCompound = strategy.perLapStrategy[currentLap-1].predicted.tyreCompound;
-    strategy.perLapStrategy[currentLap].predicted.tyreCompound = currentCompound;
-    strategy.perLapStrategy[currentLap].predicted.tyreHealth = strategy.perLapStrategy[currentLap-1].predicted.tyreHealth - StrategyConstants::tyreDefaults.at(currentCompound).tyreDegradation;
-    strategy.perLapStrategy[currentLap].predicted.fuelInTank = strategy.perLapStrategy[currentLap-1].predicted.fuelInTank - StrategyConstants::tyreDefaults.at(currentCompound).fuelUsage;
-    strategy.perLapStrategy[currentLap].predicted.lapTimeMS = strategy.perLapStrategy[currentLap-1].predicted.lapTimeMS + StrategyConstants::tyreDefaults.at(currentCompound).lapTimeIncrease;
-    strategy.predictedRaceTime += strategy.perLapStrategy[currentLap].predicted.lapTimeMS;
-    return strategy;
-}
-
-Strategy RaceStrategyPredictor::bruteForceFastestStrategy(Strategy strategy, uint8_t currentLap) {
-
-    if (currentLap == 3) {
-        return currentStrategy;
+        currentLap++;
     }
 
-    Strategy pitToC5 = bruteForceFastestStrategy(pitToTyre(ActualTyreCompound::C5, currentLap, strategy, track), currentLap+1);
-    Strategy pitToC4 = bruteForceFastestStrategy(pitToTyre(ActualTyreCompound::C4, currentLap, strategy, track), currentLap+1);
-    Strategy pitToC3 = bruteForceFastestStrategy(pitToTyre(ActualTyreCompound::C3, currentLap, strategy, track), currentLap+1);
-    Strategy pitToC2 = bruteForceFastestStrategy(pitToTyre(ActualTyreCompound::C2, currentLap, strategy, track), currentLap+1);
-    Strategy pitToC1 = bruteForceFastestStrategy(pitToTyre(ActualTyreCompound::C1, currentLap, strategy, track), currentLap+1);
-    Strategy pitToInter = bruteForceFastestStrategy(pitToTyre(ActualTyreCompound::INTER, currentLap, strategy, track), currentLap+1);
-    Strategy pitToWet = bruteForceFastestStrategy(pitToTyre(ActualTyreCompound::WET, currentLap, strategy, track), currentLap+1);
-
-    if (currentLap == 0) {
-        return std::min({pitToC5, pitToC4, pitToC3, pitToC2, pitToC2, pitToInter, pitToWet}, compareStrategies);
-    } else {
-        Strategy noPit = bruteForceFastestStrategy(noPitStop(currentLap, strategy), currentLap+1);
-        return std::min({pitToC5, pitToC4, pitToC3, pitToC2, pitToC1, pitToInter, pitToWet, noPit}, compareStrategies);
+    // Correct fuel to be minimum required
+    float fuelOnLastLap = currentStrategy.perLapStrategy[totalRacingLaps-1].predicted.fuelInTank;
+    for (int i = 0; i < totalRacingLaps; i++) {
+        currentStrategy.perLapStrategy[i].predicted.fuelInTank -= (fuelOnLastLap - StrategyConstants::MINIMUM_FUEL_LEVEL);
     }
 
+    currentStrategy.startingFuelLoad = currentStrategy.perLapStrategy[0].predicted.fuelInTank;
+    currentStrategy.compoundMapping = compoundMapping.value();
 }
-
 
 void RaceStrategyPredictor::updateStrategy() {
     emit StrategyUpdate(currentStrategy);
