@@ -19,7 +19,8 @@ void RaceStrategyPredictor::predictStrategy(RaceWeekend raceWeekend, uint8_t rac
     // Initialise current strategy;
     currentStrategy.totalRacingLaps = totalRacingLaps;
     currentStrategy.currentLapNumber = currentLapNumber;
-    for (int i = 0; i < totalRacingLaps; i++) {
+    // Lap 0 is 'before' lap 1, every lap maps to its index
+    for (int i = 0; i <= totalRacingLaps; i++) {
         currentStrategy.perLapStrategy.push_back({
             .actual = {
                 .lapTimeMS = 0,
@@ -77,16 +78,14 @@ void RaceStrategyPredictor::mockPredictStrategy(RaceWeekend raceWeekend) {
     };
 }
 
-ActualTyreCompound pickCompound(std::set<ActualTyreCompound> usedCompounds) {
-    if (!usedCompounds.contains(ActualTyreCompound::C1)) return ActualTyreCompound::C1;
-    if (!usedCompounds.contains(ActualTyreCompound::C2)) return ActualTyreCompound::C2;
-    if (!usedCompounds.contains(ActualTyreCompound::C3)) return ActualTyreCompound::C3;
-    if (!usedCompounds.contains(ActualTyreCompound::C4)) return ActualTyreCompound::C4;
-    if (!usedCompounds.contains(ActualTyreCompound::C5)) return ActualTyreCompound::C5;
-    if (!usedCompounds.contains(ActualTyreCompound::INTER)) return ActualTyreCompound::INTER;
-    if (!usedCompounds.contains(ActualTyreCompound::WET)) return ActualTyreCompound::WET;
+ActualTyreCompound pickCompound(std::set<ActualTyreCompound> usedCompounds, TyreCompoundMap compoundMapping) {
 
-    return ActualTyreCompound::C3;
+    // Pick the hardest compound available that is not already used
+    if (!usedCompounds.contains(compoundMapping.getHardTyre())) return compoundMapping.getHardTyre();
+    if (!usedCompounds.contains(compoundMapping.getMediumTyre())) return compoundMapping.getMediumTyre();
+    if (!usedCompounds.contains(compoundMapping.getSoftTyre())) return compoundMapping.getSoftTyre();
+
+    return compoundMapping.getMediumTyre(); // Otherwise, use the medium tyre
 }
 
 void RaceStrategyPredictor::simplePredictStrategy(RaceWeekend raceWeekend) {
@@ -97,7 +96,7 @@ void RaceStrategyPredictor::simplePredictStrategy(RaceWeekend raceWeekend) {
     std::map<ActualTyreCompound, std::vector<double>> lapTimeRegressions;
     std::map<ActualTyreCompound, std::vector<double>> lapTimesPerTyre;
 
-    std::optional<std::map<ActualTyreCompound, VisualTyreCompound>> compoundMapping;
+    TyreCompoundMap compoundMapping;
 
     Practice practices[3] = {
         raceWeekend.race_sessions().fp1(),
@@ -124,7 +123,7 @@ void RaceStrategyPredictor::simplePredictStrategy(RaceWeekend raceWeekend) {
             ActualTyreCompound tyreCompound = getActualTyreCompound(raceSimulation.setup().actual_tyre_compound());
             VisualTyreCompound visualCompound = getVisualTyreCompound(raceSimulation.setup().visual_tyre_compound());
 
-            if (!compoundMapping.has_value()) compoundMapping = determineCompoundMapping(tyreCompound, visualCompound);
+            if (!compoundMapping.exists()) compoundMapping.setMap(tyreCompound, visualCompound);
 
             // For each lap in the stint
             for (Lap lap : raceSimulation.lap()) {
@@ -187,13 +186,13 @@ void RaceStrategyPredictor::simplePredictStrategy(RaceWeekend raceWeekend) {
     std::set<ActualTyreCompound> usedCompounds; // TODO: Should this be a set?
     ActualTyreCompound currentCompound;
 
-    while (currentLap < totalRacingLaps) {
+    while (currentLap <= totalRacingLaps) {
         bool isPitLap = false;
 
         // If on first lap or tyres degraded too much, or not used two tyre sets yet
         if (currentLap == 0 || tyreHealth < 50 || (usedCompounds.size() < 2 && currentLap == totalRacingLaps-2)) {
             isPitLap = true;
-            currentCompound = pickCompound(usedCompounds);
+            currentCompound = pickCompound(usedCompounds, compoundMapping);
             usedCompounds.insert(currentCompound);
             tyreHealth = 100;
 
@@ -230,13 +229,13 @@ void RaceStrategyPredictor::simplePredictStrategy(RaceWeekend raceWeekend) {
     }
 
     // Correct fuel to be minimum required
-    float fuelOnLastLap = currentStrategy.perLapStrategy[totalRacingLaps-1].predicted.fuelInTank;
+    float fuelOnLastLap = currentStrategy.perLapStrategy[totalRacingLaps].predicted.fuelInTank;
     for (int i = 0; i < totalRacingLaps; i++) {
         currentStrategy.perLapStrategy[i].predicted.fuelInTank -= (fuelOnLastLap - StrategyConstants::MINIMUM_FUEL_LEVEL);
     }
 
     currentStrategy.startingFuelLoad = currentStrategy.perLapStrategy[0].predicted.fuelInTank;
-    currentStrategy.compoundMapping = compoundMapping.value();
+    currentStrategy.compoundMapping = compoundMapping;
 }
 
 void RaceStrategyPredictor::updateStrategy() {
@@ -259,9 +258,12 @@ void RaceStrategyPredictor::handleLapPacket(const PacketData &packet) {
 
     // Change of lap number
     if (ld.currentLapNum != currentLapNumber) {
-        if (currentLapNumber > 0) {
-            currentStrategy.perLapStrategy[currentLapNumber - 1].actual.lapTimeMS = ld.lastLapTimeInMS;
-        }
+        // If fuel and tyres not yet set, don't record the starting values and update the lap number
+        if (currentLapNumber == 0 && (currentFuelInTank == 0 || currentTyreHealth == 0)) return;
+
+        currentStrategy.perLapStrategy[currentLapNumber].actual.lapTimeMS = ld.lastLapTimeInMS;
+        currentStrategy.perLapStrategy[currentLapNumber].actual.fuelInTank = currentFuelInTank;
+        currentStrategy.perLapStrategy[currentLapNumber].actual.tyreHealth = currentTyreHealth;
 
         currentLapNumber = ld.currentLapNum;
         currentStrategy.currentLapNumber = currentLapNumber;
@@ -273,8 +275,34 @@ void RaceStrategyPredictor::handleEventPacket(const PacketData &packet) {}
 void RaceStrategyPredictor::handleParticipantsPacket(const PacketData &packet) {}
 void RaceStrategyPredictor::handleCarSetupPacket(const PacketData &packet) {}
 void RaceStrategyPredictor::handleCarTelemetryPacket(const PacketData &packet) {}
-void RaceStrategyPredictor::handleCarStatusPacket(const PacketData &packet) {}
+
+void RaceStrategyPredictor::handleCarStatusPacket(const PacketData &packet) {
+    if (!strategyInitialised) return;
+
+    const PacketCarStatusData statusData = packet.packet.carStatusData;
+    uint8_t playerCarIndex = packet.header.playerCarIndex;
+    CarStatusData csd = statusData.carStatusData[playerCarIndex];
+
+    currentFuelInTank = csd.fuelInTank;
+}
+
+
 void RaceStrategyPredictor::handleFinalClassificationPacket(const PacketData &packet) {}
 void RaceStrategyPredictor::handleLobbyInfoPacket(const PacketData &packet) {}
-void RaceStrategyPredictor::handleCarDamagePacket(const PacketData &packet) {}
+
+void RaceStrategyPredictor::handleCarDamagePacket(const PacketData &packet) {
+    if (!strategyInitialised) return;
+
+    const PacketCarDamageData damageData = packet.packet.carDamageData;
+    uint8_t playerCarIndex = packet.header.playerCarIndex;
+    CarDamageData csd = damageData.carDamageData[playerCarIndex];
+
+    currentTyreHealth = 100 - std::min({csd.tyresDamage[REAR_LEFT],
+                                        csd.tyresDamage[REAR_RIGHT],
+                                        csd.tyresDamage[FRONT_LEFT],
+                                        csd.tyresDamage[FRONT_RIGHT]});
+
+}
+
+
 void RaceStrategyPredictor::handleSessionHistoryPacket(const PacketData &packet) {}

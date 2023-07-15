@@ -6,6 +6,71 @@
 #include "enums.hpp"
 #include <QObject>
 
+class TyreCompoundMap {
+public:
+
+    void setMap(ActualTyreCompound actual, VisualTyreCompound visual) {
+        if ((actual == ActualTyreCompound::C1 && visual == VisualTyreCompound::HARD_VISUAL)
+            || (actual == ActualTyreCompound::C2 && visual == VisualTyreCompound::MEDIUM_VISUAL)
+            || (actual == ActualTyreCompound::C3 && visual == VisualTyreCompound::SOFT_VISUAL)) {
+            hardTyreCompound = ActualTyreCompound::C1;
+            mediumTyreCompound = ActualTyreCompound::C2;
+            softTyreCompound = ActualTyreCompound::C3;
+        }
+
+        if ((actual == ActualTyreCompound::C2 && visual == VisualTyreCompound::HARD_VISUAL)
+            || (actual == ActualTyreCompound::C3 && visual == VisualTyreCompound::MEDIUM_VISUAL)
+            || (actual == ActualTyreCompound::C4 && visual == VisualTyreCompound::SOFT_VISUAL)) {
+            hardTyreCompound = ActualTyreCompound::C2;
+            mediumTyreCompound = ActualTyreCompound::C3;
+            softTyreCompound = ActualTyreCompound::C4;
+        }
+
+        if ((actual == ActualTyreCompound::C3 && visual == VisualTyreCompound::HARD_VISUAL)
+            || (actual == ActualTyreCompound::C4 && visual == VisualTyreCompound::MEDIUM_VISUAL)
+            || (actual == ActualTyreCompound::C5 && visual == VisualTyreCompound::SOFT_VISUAL)) {
+            hardTyreCompound = ActualTyreCompound::C3;
+            mediumTyreCompound = ActualTyreCompound::C4;
+            softTyreCompound = ActualTyreCompound::C5;
+        }
+
+        mapExists = true;
+    }
+
+    ActualTyreCompound getHardTyre() {
+        return hardTyreCompound;
+    }
+
+    ActualTyreCompound getMediumTyre() {
+        return mediumTyreCompound;
+    }
+
+    ActualTyreCompound getSoftTyre() {
+        return softTyreCompound;
+    }
+
+    VisualTyreCompound getVisualTyreCompound(ActualTyreCompound actual) {
+        if (actual == hardTyreCompound) return VisualTyreCompound::HARD_VISUAL;
+        if (actual == mediumTyreCompound) return VisualTyreCompound::MEDIUM_VISUAL;
+        if (actual == softTyreCompound) return VisualTyreCompound::SOFT_VISUAL;
+        if (actual == ActualTyreCompound::INTER) return VisualTyreCompound::INTER_VISUAL;
+        if (actual == ActualTyreCompound::WET) return VisualTyreCompound::WET_VISUAL;
+
+        return VisualTyreCompound::HARD_VISUAL; // Default
+    }
+
+    bool exists() {
+        return mapExists;
+    }
+
+private:
+    bool mapExists = false;
+    ActualTyreCompound hardTyreCompound;
+    ActualTyreCompound mediumTyreCompound;
+    ActualTyreCompound softTyreCompound;
+
+};
+
 struct LapDetails {
     uint32_t lapTimeMS;
     float fuelInTank;
@@ -27,7 +92,7 @@ struct Strategy
     uint32_t predictedRaceTime;
     uint32_t predictedRaceTimeUncertainty;
     float startingFuelLoad;
-    std::map<ActualTyreCompound, VisualTyreCompound> compoundMapping;
+    TyreCompoundMap compoundMapping;
     std::vector<LapStrategy> perLapStrategy;
 
     bool isPitLap(int lapNumber) {
@@ -72,7 +137,7 @@ public:
      * @param[in] raceWeekend The race weekend data loaded from the protobuf file
      * @param[in] raceLaps  The number of laps to be completed in the race
      */
-    void predictStrategy(RaceWeekend, uint8_t);
+    void predictStrategy(RaceWeekend raceWeekend, uint8_t raceLaps);
     
     /**
      * @brief Update the current strategy using the live data coming from the game
@@ -93,7 +158,10 @@ private:
     uint8_t totalRacingLaps = 0;
     bool strategyInitialised = false;
     Strategy currentStrategy;
-    uint8_t currentLapNumber = 1; // TODO: THIS IS NOT GETTING UPDATED ANYWHERE ?!!
+    uint8_t currentLapNumber = 0;
+
+    float currentFuelInTank;
+    float currentTyreHealth;
 
     void mockPredictStrategy(RaceWeekend);
     void simplePredictStrategy(RaceWeekend);

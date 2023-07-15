@@ -2,7 +2,6 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include "analysis.hpp"
 #include "udp_updater.h"
 #include "gui_types.hpp"
 #include "enums.hpp"
@@ -68,8 +67,6 @@ private:
     Lap selectedLoadedLap2;
 
     uint8_t predictedLaps = 0;
-    LinearRegressionResult predictedFuelRegression;
-    void updateFuelPrediction();
 
     QVector<double> fuelUsageStrategyPlotValues;
     QVector<double> lapStrategyPlotValues;
@@ -123,10 +120,6 @@ private slots:
     void on_ddSelectLoadedStintType_currentIndexChanged(int index);
     void on_ddSelectLoadedStintNumber_currentIndexChanged(int index);
     void on_ddSelectLoadedLapNumberTelemetryLap1_currentIndexChanged(int index);
-    void on_btnPredictedLapsPlus1_clicked();
-    void on_btnPredictedLapsMinus1_clicked();
-    void on_btnPredictedLapsPlus10_clicked();
-    void on_btnPredictedLapsMinus10_clicked();
     void on_ddSelectLoadedLapNumberTelemetryLap2_currentIndexChanged(int index);
     void on_actionUDP_Settings_triggered();
     void on_btnPredictStrategy_clicked();

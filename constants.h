@@ -115,7 +115,7 @@ const std::map<TrackID, uint32_t> averageLapTimeDefaults = {
     {TrackID::IMOLA, 0},
     {TrackID::PORTIMAO, 0},
     {TrackID::JEDDAH, 0},
-    {TrackID::MIAMI, 0},
+    {TrackID::MIAMI, 94000},
 };
 
 } // namespace StrategyConstants

@@ -2,6 +2,7 @@
 #include "./ui_mainwindow.h"
 #include "formatting.hpp"
 #include "compiled_protos/RaceWeekend.pb.h"
+#include "analysis.hpp"
 
 #include <ostream>
 #include <iostream>
@@ -990,14 +991,6 @@ void MainWindow::onDriverAheadAndBehindUpdate(LiveStrategyData liveStrategyData)
     ui->lblDriverBehindPosition->setText(QString::fromStdString(liveStrategyData.driverBehindPosition));
     ui->lblLastLapTimeStrategy->setText(QString::fromStdString(liveStrategyData.lastLap));
     ui->lblCurrentPositionStrategy->setText(QString::fromStdString(liveStrategyData.currentPosition));
-
-
-    fuelUsageStrategyPlotValues.append(liveStrategyData.fuelInTank);
-    lapStrategyPlotValues.append(liveStrategyData.lapDistance / trackLength);
-
-    ui->pltFuelUsageStrategy->graph(1)->setData(lapStrategyPlotValues, fuelUsageStrategyPlotValues);
-    ui->pltFuelUsage->rescaleAxes();
-    ui->pltFuelUsageStrategy->replot();
 }
 
 void MainWindow::onStrategyUpdate(Strategy newStrategy) {
@@ -1024,7 +1017,7 @@ void MainWindow::onStrategyUpdate(Strategy newStrategy) {
         ui->lblNextPitstopLapsLeft->setText("");
     } else {
         ui->lblNextPitstopTyre->setText(QString::fromStdString(getActualTyreName(pitLapStrategy.predicted.tyreCompound)));
-        ui->lblNextPitstopTyre->setStyleSheet(QString::fromStdString("color: " + getVisualTyreColour(newStrategy.compoundMapping[pitLapStrategy.predicted.tyreCompound]).getHexCode()));
+        ui->lblNextPitstopTyre->setStyleSheet(QString::fromStdString("color: " + getVisualTyreColour(newStrategy.compoundMapping.getVisualTyreCompound(pitLapStrategy.predicted.tyreCompound)).getHexCode()));
         ui->lblNextPitstopOnLap->setText("On Lap " + QString::number(nextPitstopLap));
 
         // + 1 because we want to include the current lap as a lap to complete
@@ -1037,21 +1030,33 @@ void MainWindow::onStrategyUpdate(Strategy newStrategy) {
     }
 
     // Update fuel usage and tyre degradation strategy
-    QVector<double> fuelInTank;
-    QVector<double> tyreDegradation;
-    QVector<double> laps;
+    QVector<double> predictedFuelInTank;
+    QVector<double> predictedTyreDegradation;
+    QVector<double> actualFuelInTank;
+    QVector<double> actualTyreDegradation;
+    QVector<double> predictedLaps;
+    QVector<double> actualLaps;
 
     for (size_t i = 0; i < newStrategy.perLapStrategy.size(); i++) {
-        fuelInTank.append(newStrategy.perLapStrategy[i].predicted.fuelInTank);        
-        tyreDegradation.append(newStrategy.perLapStrategy[i].predicted.tyreHealth);
-        laps.append(i);
+        predictedFuelInTank.append(newStrategy.perLapStrategy[i].predicted.fuelInTank);
+        predictedTyreDegradation.append(newStrategy.perLapStrategy[i].predicted.tyreHealth);
+        predictedLaps.append(i);
     }
 
-    ui->pltFuelUsageStrategy->graph(0)->setData(laps, fuelInTank);
+    for (size_t i = 0; i < newStrategy.currentLapNumber; i++) {
+        actualFuelInTank.append(newStrategy.perLapStrategy[i].actual.fuelInTank);
+        actualTyreDegradation.append(newStrategy.perLapStrategy[i].actual.tyreHealth);
+        actualLaps.append(i);
+    }
+
+    ui->pltFuelUsageStrategy->graph(0)->setData(predictedLaps, predictedFuelInTank);
+    ui->pltFuelUsageStrategy->graph(1)->setData(actualLaps, actualFuelInTank);
     ui->pltFuelUsageStrategy->xAxis->setRange(0, newStrategy.totalRacingLaps);
     ui->pltFuelUsageStrategy->replot();
 
-    ui->pltTyreStrategy->graph(0)->setData(laps, tyreDegradation);
+
+    ui->pltTyreStrategy->graph(0)->setData(predictedLaps, predictedTyreDegradation);
+    ui->pltTyreStrategy->graph(1)->setData(actualLaps, actualTyreDegradation);
     ui->pltTyreStrategy->xAxis->setRange(0, newStrategy.totalRacingLaps);
     ui->pltTyreStrategy->replot();
 
@@ -1081,7 +1086,7 @@ void MainWindow::onStrategyUpdate(Strategy newStrategy) {
         tyre->setFlags(tyre->flags() & ~Qt::ItemIsEditable);
         tyre->setTextAlignment(Qt::AlignCenter);
         tyre->setFont(font);
-        VisualTyreCompound vtc = newStrategy.compoundMapping[pit.second];
+        VisualTyreCompound vtc = newStrategy.compoundMapping.getVisualTyreCompound(pit.second);
         tyre->setForeground(QBrush(QColor(QString::fromStdString(getVisualTyreColour(vtc).getHexCode()))));
         ui->tblTyreStrategy->setItem(r, 1, tyre);
 
@@ -1311,20 +1316,18 @@ void MainWindow::updateLoadedRaceWeekendData() {
     std::vector<double> tyreValues(tyreDegradationPlotValues.begin(), tyreDegradationPlotValues.end());
     std::vector<double> distanceValues(lapDistancePlotValues.begin(), lapDistancePlotValues.end());
 
-    predictedFuelRegression = calculateLinearRegression(distanceValues, fuelValues);
+    LinearRegressionResult fuelRegression = calculateLinearRegression(distanceValues, fuelValues);
     LinearRegressionResult tyreRegression = calculateLinearRegression(distanceValues, tyreValues);
 
     ui->pltFuelUsage->graph(0)->setData(lapDistancePlotValues, fuelUsagePlotValues);
     ui->pltFuelUsage->rescaleAxes();
-    plotRegressionLine(ui->pltFuelUsage, predictedFuelRegression);
+    plotRegressionLine(ui->pltFuelUsage, fuelRegression);
 
-    ui->lblFuelUsagePerLap->setText(QString::number(abs(predictedFuelRegression.gradient) * loadedRaceWeekend.track_length()) + " kg/lap");
+    ui->lblFuelUsagePerLap->setText(QString::number(abs(fuelRegression.gradient) * loadedRaceWeekend.track_length()) + " kg/lap");
 
     ui->pltTyreDegradation->graph(0)->setData(lapDistancePlotValues, tyreDegradationPlotValues);
     ui->pltTyreDegradation->rescaleAxes();
     plotRegressionLine(ui->pltTyreDegradation, tyreRegression);
-
-    updateFuelPrediction();
 
     // TODO: previous linear regression needs to be cleared each load
     ui->lblTyreDegradationPerLap->setText(QString::number(abs(tyreRegression.gradient) * loadedRaceWeekend.track_length()) + " %/lap");
@@ -1536,43 +1539,6 @@ void MainWindow::updateRecordedTelemetryGraphs() {
     ui->pltRecordedSteering->replot();
 }
 
-
-void MainWindow::on_btnPredictedLapsPlus1_clicked()
-{
-    predictedLaps += 1;
-    ui->lblPredictedTotalLaps->setText(QString::number(predictedLaps) + " Laps");
-    updateFuelPrediction();
-}
-
-
-void MainWindow::on_btnPredictedLapsMinus1_clicked()
-{
-    // Only minus if result is > 0;
-    if (predictedLaps > 1) predictedLaps -= 1;
-    ui->lblPredictedTotalLaps->setText(QString::number(predictedLaps) + " Laps");
-    updateFuelPrediction();
-}
-
-
-void MainWindow::on_btnPredictedLapsPlus10_clicked()
-{
-    predictedLaps += 10;
-    ui->lblPredictedTotalLaps->setText(QString::number(predictedLaps) + " Laps");
-    updateFuelPrediction();
-}
-
-
-void MainWindow::on_btnPredictedLapsMinus10_clicked()
-{
-    // Only minus if result is > 0;
-    if (predictedLaps > 10) predictedLaps -= 10;
-    ui->lblPredictedTotalLaps->setText(QString::number(predictedLaps) + " Laps");
-    updateFuelPrediction();
-}
-
-void MainWindow::updateFuelPrediction() {
-    ui->lblPredictedFuel->setText(QString::number(predictedLaps * loadedRaceWeekend.track_length() * abs(predictedFuelRegression.gradient)) + " kg");
-}
 
 void MainWindow::on_actionUDP_Settings_triggered()
 {

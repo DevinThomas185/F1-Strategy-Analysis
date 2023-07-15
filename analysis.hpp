@@ -17,6 +17,4 @@ LinearRegressionResult calculateLinearRegression(const std::vector<double>& x_va
 
 double standard_deviation(const std::vector<double>& values);
 
-std::map<ActualTyreCompound, VisualTyreCompound> determineCompoundMapping(ActualTyreCompound actual, VisualTyreCompound visual);
-
 #endif // ANALYSIS_HPP
