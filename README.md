@@ -59,6 +59,8 @@ Only some of the track maps have been drawn and added to the software. These are
 
 ## Recently Complete Features
 
+- Table to display the predicted pit stops
+- Display the starting fuel amount for the race
 - Add different tyres to Live Strategy tab
 - Add tyre degradation to Live Strategy tab
 - Add fuel usage graphing to Live Strategy tab

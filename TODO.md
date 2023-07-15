@@ -24,8 +24,8 @@
 
 ## Features
 
+- Remove fuel prediction from the Recorded Laps Tab
 - Add session timer for practice and qualifying
-- Add starting fuel amount to Live Strategy tab (newStrategy.perLapStrategy[0].predicted.fuelInTank = Fuel at first lap)
 - Add tyre strategy in a graphical way to the Live Strategy tab
 - Add current tyres and tyre age to live strategy tab
 - Reorganise the live strategy tab
