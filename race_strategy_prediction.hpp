@@ -75,7 +75,6 @@ struct LapDetails {
     uint32_t lapTimeMS;
     float fuelInTank;
     ActualTyreCompound tyreCompound;
-    VisualTyreCompound visualTyreCompound;
     float tyreHealth;
 };
 
@@ -105,7 +104,8 @@ struct Strategy
     }
 
     uint8_t nextPitStop() {
-        for (size_t i = currentLapNumber; i <= totalRacingLaps; i++) {
+        size_t start = currentLapNumber == 0 ? 1 : currentLapNumber;
+        for (size_t i = start; i <= totalRacingLaps; i++) {
             if (isPitLap(i)) return i;
         }
         return 0;

@@ -178,12 +178,12 @@ void MainWindow::setupPlots() {
     ui->pltFuelUsage->yAxis->setRange(0, 110);
 
     // Fuel Usage Strategy
-    ui->pltFuelUsageStrategy->addGraph();
+    ui->pltFuelUsageStrategy->addGraph(); // Actual fuel usage
+    ui->pltFuelUsageStrategy->addGraph(); // Predicted fuel usage
+    ui->pltFuelUsageStrategy->graph(0)->setPen(QPen(Qt::red));
     ui->pltFuelUsageStrategy->yAxis->setLabel("Fuel (kg)");
     ui->pltFuelUsageStrategy->xAxis->setLabel("Lap");
     ui->pltFuelUsageStrategy->yAxis->setRange(0, 110);
-    ui->pltFuelUsageStrategy->addGraph();
-    ui->pltFuelUsageStrategy->graph(1)->setPen(QPen(Qt::red));
 
     // Tyre Degradation
     ui->pltTyreDegradation->addGraph();
@@ -192,11 +192,10 @@ void MainWindow::setupPlots() {
 
     // Tyre Degradation Strategy
     ui->pltTyreStrategy->addGraph();
+    ui->pltTyreStrategy->graph(0)->setPen(QPen(Qt::red));
     ui->pltTyreStrategy->yAxis->setLabel("Tyre Health (%");
     ui->pltTyreStrategy->xAxis->setLabel("Lap");
     ui->pltTyreStrategy->yAxis->setRange(0, 100);
-    ui->pltTyreStrategy->addGraph();
-    ui->pltTyreStrategy->graph(1)->setPen(QPen(Qt::red));
 
     replotTelemetryPlots();
 }
@@ -1009,7 +1008,7 @@ void MainWindow::onStrategyUpdate(Strategy newStrategy) {
 
     // Update next pitstop
     uint8_t nextPitstopLap = newStrategy.nextPitStop();
-    LapStrategy pitLapStrategy = newStrategy.perLapStrategy[nextPitstopLap - 1];
+    LapStrategy pitLapStrategy = newStrategy.perLapStrategy[nextPitstopLap];
 
     if (nextPitstopLap == 0) {
         ui->lblNextPitstopTyre->setText("");
@@ -1030,33 +1029,78 @@ void MainWindow::onStrategyUpdate(Strategy newStrategy) {
     }
 
     // Update fuel usage and tyre degradation strategy
-    QVector<double> predictedFuelInTank;
-    QVector<double> predictedTyreDegradation;
-    QVector<double> actualFuelInTank;
-    QVector<double> actualTyreDegradation;
-    QVector<double> predictedLaps;
-    QVector<double> actualLaps;
 
-    for (size_t i = 0; i < newStrategy.perLapStrategy.size(); i++) {
-        predictedFuelInTank.append(newStrategy.perLapStrategy[i].predicted.fuelInTank);
-        predictedTyreDegradation.append(newStrategy.perLapStrategy[i].predicted.tyreHealth);
-        predictedLaps.append(i);
+    // Clear actual values
+    ui->pltFuelUsageStrategy->graph(0)->data()->clear();
+    ui->pltTyreStrategy->graph(0)->data()->clear();
+
+    // Clear predicted values
+    ui->pltFuelUsageStrategy->graph(1)->data()->clear();
+    for (int i = 1; i < ui->pltTyreStrategy->graphCount(); i++) {
+        ui->pltTyreStrategy->removeGraph(i);
     }
 
+    QVector<double> predictedFuelInTank;
+    QVector<double> actualFuelInTank;
+
+    QVector<double> predictedTyreDegradation;
+    QVector<double> actualTyreDegradation;
+
+    QVector<double> predictedTyreDegradationLaps;
+    QVector<double> predictedFuelUsageLaps;
+    QVector<double> actualLaps;
+
+    // Plot predicted values
+    ActualTyreCompound currentCompound = newStrategy.perLapStrategy[0].predicted.tyreCompound;
+
+    for (size_t i = 0; i <= newStrategy.totalRacingLaps; i++) {
+        LapDetails ld = newStrategy.perLapStrategy[i].predicted;
+        if (currentCompound != ld.tyreCompound) {
+//            // Add this lap so there is no gap in the graph
+//            predictedTyreDegradationLaps.append(i);
+//            predictedTyreDegradation.append(ld.tyreHealth);
+
+            ui->pltTyreStrategy->addGraph();
+            int graphNum = ui->pltTyreStrategy->graphCount()-1;
+            ui->pltTyreStrategy->graph(graphNum)->setData(predictedTyreDegradationLaps, predictedTyreDegradation);
+            Colour c = getVisualTyreColour(newStrategy.compoundMapping.getVisualTyreCompound(currentCompound));
+            ui->pltTyreStrategy->graph(graphNum)->setBrush(QBrush(QColor(c.r, c.g, c.b, 20)));
+
+            predictedTyreDegradation.clear();
+            predictedTyreDegradationLaps.clear();
+
+            currentCompound = ld.tyreCompound;
+        }
+
+        predictedFuelInTank.append(ld.fuelInTank);
+        predictedTyreDegradation.append(ld.tyreHealth);
+        predictedFuelUsageLaps.append(i);
+        predictedTyreDegradationLaps.append(i);
+    }
+
+    // Set tyre degradation for last stint
+    ui->pltTyreStrategy->addGraph();
+    int graphNum = ui->pltTyreStrategy->graphCount()-1;
+    ui->pltTyreStrategy->graph(graphNum)->setData(predictedTyreDegradationLaps, predictedTyreDegradation);
+    Colour c = getVisualTyreColour(newStrategy.compoundMapping.getVisualTyreCompound(currentCompound));
+    ui->pltTyreStrategy->graph(graphNum)->setBrush(QBrush(QColor(c.r, c.g, c.b, 20)));
+
+    // Set predicted fuel usage
+    ui->pltFuelUsageStrategy->graph(1)->setData(predictedFuelUsageLaps, predictedFuelInTank);
+
+
+    // Plot actual values
     for (size_t i = 0; i < newStrategy.currentLapNumber; i++) {
         actualFuelInTank.append(newStrategy.perLapStrategy[i].actual.fuelInTank);
         actualTyreDegradation.append(newStrategy.perLapStrategy[i].actual.tyreHealth);
         actualLaps.append(i);
     }
 
-    ui->pltFuelUsageStrategy->graph(0)->setData(predictedLaps, predictedFuelInTank);
-    ui->pltFuelUsageStrategy->graph(1)->setData(actualLaps, actualFuelInTank);
+    ui->pltFuelUsageStrategy->graph(0)->setData(actualLaps, actualFuelInTank);
     ui->pltFuelUsageStrategy->xAxis->setRange(0, newStrategy.totalRacingLaps);
     ui->pltFuelUsageStrategy->replot();
 
-
-    ui->pltTyreStrategy->graph(0)->setData(predictedLaps, predictedTyreDegradation);
-    ui->pltTyreStrategy->graph(1)->setData(actualLaps, actualTyreDegradation);
+    ui->pltTyreStrategy->graph(0)->setData(actualLaps, actualTyreDegradation);
     ui->pltTyreStrategy->xAxis->setRange(0, newStrategy.totalRacingLaps);
     ui->pltTyreStrategy->replot();
 
@@ -1067,7 +1111,10 @@ void MainWindow::onStrategyUpdate(Strategy newStrategy) {
         }
     }
 
+
     // Tyre Strategy table
+    ui->tblTyreStrategy->clearContents();
+
     while (ui->tblTyreStrategy->rowCount() < pitStops.size()) {
         ui->tblTyreStrategy->insertRow(0);
     }
@@ -1076,7 +1123,8 @@ void MainWindow::onStrategyUpdate(Strategy newStrategy) {
     QFont font = QFont();
     font.setPointSize(18);
     for (auto pit : pitStops) {
-        QTableWidgetItem *lap = new QTableWidgetItem(QString::number(pit.first));
+        QString lapText = pit.first == 0 ? QString("Start") : QString::number(pit.first);
+        QTableWidgetItem *lap = new QTableWidgetItem(lapText);
         lap->setFlags(lap->flags() & ~Qt::ItemIsEditable);
         lap->setTextAlignment(Qt::AlignCenter);
         lap->setFont(font);
@@ -1092,8 +1140,6 @@ void MainWindow::onStrategyUpdate(Strategy newStrategy) {
 
         r++;
     }
-
-
 }
 
 

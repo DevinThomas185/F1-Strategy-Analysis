@@ -80,12 +80,26 @@ void RaceStrategyPredictor::mockPredictStrategy(RaceWeekend raceWeekend) {
 
 ActualTyreCompound pickCompound(std::set<ActualTyreCompound> usedCompounds, TyreCompoundMap compoundMapping) {
 
-    // Pick the hardest compound available that is not already used
-    if (!usedCompounds.contains(compoundMapping.getHardTyre())) return compoundMapping.getHardTyre();
-    if (!usedCompounds.contains(compoundMapping.getMediumTyre())) return compoundMapping.getMediumTyre();
+    // Pick the softest compound if not already used
     if (!usedCompounds.contains(compoundMapping.getSoftTyre())) return compoundMapping.getSoftTyre();
+    if (!usedCompounds.contains(compoundMapping.getMediumTyre())) return compoundMapping.getMediumTyre();
+    if (!usedCompounds.contains(compoundMapping.getHardTyre())) return compoundMapping.getHardTyre();
 
     return compoundMapping.getMediumTyre(); // Otherwise, use the medium tyre
+}
+
+bool pitstopRequired(uint8_t totalRacingLaps, uint8_t currentLap, float tyreHealth, std::set<ActualTyreCompound> usedCompounds) {
+    // If we have not selected the first set of tyres
+    if (currentLap == 0) return true;
+
+    // If the tyres are too worn out
+    if (tyreHealth < 50) return true;
+
+    // If the current lap is one less than the total and we haven't used two different ones we must pit to a new compound
+    // BUT, we are not in a Quickfire or Very Short race
+    if ((currentLap == totalRacingLaps - 1) && (usedCompounds.size() < 2) && totalRacingLaps > 5) return true;
+
+    return false;
 }
 
 void RaceStrategyPredictor::simplePredictStrategy(RaceWeekend raceWeekend) {
@@ -137,7 +151,7 @@ void RaceStrategyPredictor::simplePredictStrategy(RaceWeekend raceWeekend) {
                 // For all telemetry in the lap
                 for (Telemetry t : lap.telemetry()) {
                     fuelUsageValues.push_back(t.fuel_in_tank());
-                    tyreDegradationValues.push_back(t.rear_left_tyre_damage()); // TODO: CHANGE TO BE AN AVERAGE OF ALL TYRE'S DEGRADATIONS
+                    tyreDegradationValues.push_back(t.rear_left_tyre_damage()); // TODO: CHANGE TO BE AN AVERAGE OF ALL TYRE'S DEGRADATIONS OR MINIMUM OF THE 4
                     lapDistanceValues.push_back(l + t.lap_distance());
                 }
                 l += raceWeekend.track_length();
@@ -183,14 +197,14 @@ void RaceStrategyPredictor::simplePredictStrategy(RaceWeekend raceWeekend) {
     float totalFuelLeft = 110; // Maximum amount of fuel that can go in the car
     uint32_t predictedLapTime = StrategyConstants::averageLapTimeDefaults.at(getTrackID(raceWeekend.track_id()));
 
-    std::set<ActualTyreCompound> usedCompounds; // TODO: Should this be a set?
+    std::set<ActualTyreCompound> usedCompounds;
     ActualTyreCompound currentCompound;
 
     while (currentLap <= totalRacingLaps) {
         bool isPitLap = false;
 
         // If on first lap or tyres degraded too much, or not used two tyre sets yet
-        if (currentLap == 0 || tyreHealth < 50 || (usedCompounds.size() < 2 && currentLap == totalRacingLaps-2)) {
+        if (pitstopRequired(totalRacingLaps, currentLap, tyreHealth, usedCompounds)) {
             isPitLap = true;
             currentCompound = pickCompound(usedCompounds, compoundMapping);
             usedCompounds.insert(currentCompound);
@@ -230,7 +244,7 @@ void RaceStrategyPredictor::simplePredictStrategy(RaceWeekend raceWeekend) {
 
     // Correct fuel to be minimum required
     float fuelOnLastLap = currentStrategy.perLapStrategy[totalRacingLaps].predicted.fuelInTank;
-    for (int i = 0; i < totalRacingLaps; i++) {
+    for (int i = 0; i <= totalRacingLaps; i++) {
         currentStrategy.perLapStrategy[i].predicted.fuelInTank -= (fuelOnLastLap - StrategyConstants::MINIMUM_FUEL_LEVEL);
     }
 
