@@ -89,18 +89,20 @@ ActualTyreCompound pickCompound(std::set<ActualTyreCompound> usedCompounds, Tyre
 }
 
 bool pitstopRequired(uint8_t totalRacingLaps, uint8_t currentLap, float tyreHealth, TyreCompoundMap compoundMapping,  std::set<ActualTyreCompound> usedCompounds) {
-    // If we have not selected the first set of tyres
+    // If first set of tyres not selected yet
     if (currentLap == 0) return true;
 
     // If the tyres are too worn out
     if (tyreHealth < 50) return true;
 
-    // If not used either the mediums or the hards yet
-    if (!usedCompounds.contains(compoundMapping.getMediumTyre()) || !usedCompounds.contains(compoundMapping.getHardTyre())) return true;
+    // If not in a Quickfire or Very Short race and we are at the penultimate lap
+    if (totalRacingLaps > 5 && (currentLap == totalRacingLaps - 1)) {
+        // Either mediums or hard tyres not used yet
+        if (!usedCompounds.contains(compoundMapping.getMediumTyre()) || !usedCompounds.contains(compoundMapping.getHardTyre())) return true;
 
-    // If the current lap is one less than the total and we haven't used two different ones we must pit to a new compound
-    // BUT, we are not in a Quickfire or Very Short race
-    if ((currentLap == totalRacingLaps - 1) && (usedCompounds.size() < 2) && totalRacingLaps > 5) return true;
+        // Not yet completed one pitstop
+        if (usedCompounds.size() < 2) return true;
+    }
 
     return false;
 }
@@ -143,7 +145,7 @@ void RaceStrategyPredictor::simplePredictStrategy(RaceWeekend raceWeekend) {
             if (!compoundMapping.exists()) compoundMapping.setMap(tyreCompound, visualCompound);
 
             // For each lap in the stint
-            for (Lap lap : raceSimulation.lap()) {
+            for (const Lap &lap : raceSimulation.lap()) {
                 // IN LAP has no lap time but lap exists in recording TODO: Remove this?
                 if (lap.lap_time() == 0) continue;
 
@@ -152,7 +154,7 @@ void RaceStrategyPredictor::simplePredictStrategy(RaceWeekend raceWeekend) {
                 lapNumberValues.push_back(lapNumber++);
 
                 // For all telemetry in the lap
-                for (Telemetry t : lap.telemetry()) {
+                for (const Telemetry &t : lap.telemetry()) {
                     fuelUsageValues.push_back(t.fuel_in_tank());
                     tyreDegradationValues.push_back(t.rear_left_tyre_damage()); // TODO: CHANGE TO BE AN AVERAGE OF ALL TYRE'S DEGRADATIONS OR MINIMUM OF THE 4
                     lapDistanceValues.push_back(l + t.lap_distance());

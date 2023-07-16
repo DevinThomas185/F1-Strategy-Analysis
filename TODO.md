@@ -2,6 +2,7 @@
 
 ## Bugs
 
+- Spamming predict strategy messes up the graphs and the predicted lap times
 - Strategy prediction for lap time regressions are invalid as some stints may be completed on used tyres and different fuel loads so these must be taken into account
 - Software crashes when clicking Predict Strategy without loading in a race recording
 - Fix to tyre wear in damage tab
@@ -24,7 +25,6 @@
 
 ## Features
 
-- Spamming predict strategy messes up the graphs and the predicted lap times
 - Remove fuel prediction from the Recorded Laps Tab
 - Add session timer for practice and qualifying
 - Add tyre strategy in a graphical way to the Live Strategy tab
