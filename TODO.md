@@ -24,6 +24,7 @@
 
 ## Features
 
+- Spamming predict strategy messes up the graphs and the predicted lap times
 - Remove fuel prediction from the Recorded Laps Tab
 - Add session timer for practice and qualifying
 - Add tyre strategy in a graphical way to the Live Strategy tab
