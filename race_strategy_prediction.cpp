@@ -88,12 +88,15 @@ ActualTyreCompound pickCompound(std::set<ActualTyreCompound> usedCompounds, Tyre
     return compoundMapping.getMediumTyre(); // Otherwise, use the medium tyre
 }
 
-bool pitstopRequired(uint8_t totalRacingLaps, uint8_t currentLap, float tyreHealth, std::set<ActualTyreCompound> usedCompounds) {
+bool pitstopRequired(uint8_t totalRacingLaps, uint8_t currentLap, float tyreHealth, TyreCompoundMap compoundMapping,  std::set<ActualTyreCompound> usedCompounds) {
     // If we have not selected the first set of tyres
     if (currentLap == 0) return true;
 
     // If the tyres are too worn out
     if (tyreHealth < 50) return true;
+
+    // If not used either the mediums or the hards yet
+    if (!usedCompounds.contains(compoundMapping.getMediumTyre()) || !usedCompounds.contains(compoundMapping.getHardTyre())) return true;
 
     // If the current lap is one less than the total and we haven't used two different ones we must pit to a new compound
     // BUT, we are not in a Quickfire or Very Short race
@@ -204,7 +207,7 @@ void RaceStrategyPredictor::simplePredictStrategy(RaceWeekend raceWeekend) {
         bool isPitLap = false;
 
         // If on first lap or tyres degraded too much, or not used two tyre sets yet
-        if (pitstopRequired(totalRacingLaps, currentLap, tyreHealth, usedCompounds)) {
+        if (pitstopRequired(totalRacingLaps, currentLap, tyreHealth, compoundMapping, usedCompounds)) {
             isPitLap = true;
             currentCompound = pickCompound(usedCompounds, compoundMapping);
             usedCompounds.insert(currentCompound);
