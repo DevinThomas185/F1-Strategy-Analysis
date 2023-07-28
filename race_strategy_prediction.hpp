@@ -165,7 +165,7 @@ private:
 
     void mockPredictStrategy(RaceWeekend);
     void simplePredictStrategy(RaceWeekend);
-    Strategy bruteForceFastestStrategy(Strategy currentStrategy, uint8_t currentLap);
+    void geneticAlgorithmPredictStrategy(RaceWeekend);
 
 signals:
     void StrategyUpdate(Strategy);

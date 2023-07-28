@@ -40,6 +40,7 @@ void RaceStrategyPredictor::predictStrategy(RaceWeekend raceWeekend, uint8_t rac
 
 //    mockPredictStrategy(raceWeekend);
     simplePredictStrategy(raceWeekend);
+    geneticAlgorithmPredictStrategy(raceWeekend);
 
     strategyInitialised = true;
 
@@ -255,6 +256,10 @@ void RaceStrategyPredictor::simplePredictStrategy(RaceWeekend raceWeekend) {
 
     currentStrategy.startingFuelLoad = currentStrategy.perLapStrategy[0].predicted.fuelInTank;
     currentStrategy.compoundMapping = compoundMapping;
+}
+
+void RaceStrategyPredictor::geneticAlgorithmPredictStrategy(RaceWeekend raceWeekend) {
+    
 }
 
 void RaceStrategyPredictor::updateStrategy() {

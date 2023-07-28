@@ -28,6 +28,7 @@ SOURCES += \
     compiled_protos/Telemetry.pb.cc \
     enums.cpp \
     formatting.cpp \
+    genetic_algorithm_model.cpp \
     main.cpp \
     mainwindow.cpp \
     qcustomplot.cpp \
@@ -55,6 +56,7 @@ HEADERS += \
     constants.h \
     enums.hpp \
     formatting.hpp \
+    genetic_algorithm_model.h \
     gui_types.hpp \
     mainwindow.h \
     packet_handler.hpp \
