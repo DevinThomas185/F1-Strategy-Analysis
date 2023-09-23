@@ -83,7 +83,7 @@ const std::map<ActualTyreCompound, TyreDefaults> tyreDefaults = {
     }
 };
 
-// TODO: Fill the rest of these defaults
+// TODO: Fill the rest of these defaults & add static check to make sure all tracks are represented
 const std::map<TrackID, uint32_t> averageLapTimeDefaults = {
     {TrackID::MELBOURNE, 0},
     {TrackID::PAUL_RICARD, 0},

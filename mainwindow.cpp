@@ -270,7 +270,7 @@ void MainWindow::setTrackMap() {
     ui->pltTrackMap->clearGraphs();
     ui->lblRaceWeekend->setText(QString::fromStdString(getTrackString(trackId)));
 
-    int minX, maxX, minY, maxY = 0;
+    int minX = 0, maxX = 0, minY = 0, maxY = 0;
     std::string trackImageName;
 
     switch (trackId) {
@@ -325,6 +325,11 @@ void MainWindow::setTrackMap() {
     case MEXICO:
         break;
     case BAKU:
+        minX = -1000;
+        maxX = 1000;
+        minY = -1300;
+        maxY = 1000;
+        trackImageName = "baku.jpg";
         break;
     case SAKHIR_SHORT:
         break;
@@ -426,7 +431,7 @@ void MainWindow::onPositionalDataMapUpdate(PositionalDataMap positionalDataMap) 
 
     // Plot z/x to rotate the map
     for (size_t i = 0; i < positionalDataMap.size(); i++) {
-        PositionalData pd = positionalDataMap[i]; // SHOULD BE i // CHANGE BACK
+        PositionalData pd = positionalDataMap[i]; // SHOULD BE i NORMALLY, OR playerCarIdx FOR MAPPING
         ui->pltTrackMap->graph(0)->addData(pd.z, pd.x);
 
         // Add driver name label at each data point
