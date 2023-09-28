@@ -135,7 +135,7 @@ std::string getTrackString(TrackID trackID) {
     case MIAMI:
         return "Miami";
     default:
-        break;
+        return "Unknown";
     }
 }
 

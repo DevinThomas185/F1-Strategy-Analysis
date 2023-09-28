@@ -40,6 +40,8 @@ Only some of the track maps have been drawn and added to the software. These are
 - Bahrain International Circuit (Bahrain)
 - Jeddah Corniche Circuit (Saudi Arabia)
 - Albert Park (Australia)
+- Baku City Circuit (Azerbaijan)
+- Miami International Autodrome (Miami)
 
 ### Lap recording
 
@@ -73,8 +75,6 @@ Only some of the track maps have been drawn and added to the software. These are
 
 ### Incomplete Track Maps
 
-- Baku City Circuit (Azerbaijan)
-- Miami International Autodrome (Miami)
 - Imola Circuit (Emilia Romagna)
 - Circuit de Monaco (Monaco)
 - Circuit de Barcelona-Catalunya (Spain)

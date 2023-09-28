@@ -266,6 +266,7 @@ void MainWindow::onTrackUpdate(TrackID tId) {
     setTrackMap();
 }
 
+// TODO: Move these values into the Tracks Constants file
 void MainWindow::setTrackMap() {
     ui->pltTrackMap->clearGraphs();
     ui->lblRaceWeekend->setText(QString::fromStdString(getTrackString(trackId)));
@@ -355,6 +356,11 @@ void MainWindow::setTrackMap() {
         trackImageName = "jeddah.jpg";
         break;
     case MIAMI:
+        minX = -500;
+        maxX = 500;
+        minY = -850;
+        maxY = 850;
+        trackImageName = "miami.jpg";
         break;
     }
 

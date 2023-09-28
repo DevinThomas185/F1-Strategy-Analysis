@@ -76,7 +76,8 @@ RESOURCES += \
     images/tracks/sakhir.jpg \
     images/tracks/jeddah.jpg \
     images/tracks/melbourne.jpg \
-    images/tracks/baku.jpg
+    images/tracks/baku.jpg \
+    images/tracks/miami.jpg
 
 PROTOBUF_PATH = /usr/local/Cellar/protobuf/21.12
 
